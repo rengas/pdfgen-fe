@@ -1,0 +1,31 @@
+.reset {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.reset__container {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    background-color: #dcdcdc;
+    padding: 1.875rem;
+}
+.reset__textBox {
+    padding: .625rem;
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+}
+
+.reset__btn {
+    padding: .625rem;
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+    border: none;
+    color: white;
+    background-color: black;
+}
+.reset div {
+    margin-top: 7px;
+}

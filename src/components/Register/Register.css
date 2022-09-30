@@ -1,0 +1,37 @@
+.register {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.register__container {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    background-color: #dcdcdc;
+    padding: 1.875rem;
+}
+.register__textBox {
+    padding: .625rem;
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+}
+
+.register__btn {
+    padding: .625rem;
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+    border: none;
+    color: white;
+    background-color: black;
+}
+
+.register__google {
+    background-color: #4285f4;
+}
+
+.register div {
+    margin-top: 7px;
+}
