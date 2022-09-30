@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { auth, logInWithEmailAndPassword, signInWithGoogle } from "../../config/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
+import TextField from '@mui/material/TextField';
+
+import { auth, logInWithEmailAndPassword, signInWithGoogle } from "../../config/firebase";
 import "./Login.css";
 
 function Login() {
@@ -15,20 +17,25 @@ function Login() {
       // maybe trigger a loading screen
       return;
     }
-    // if (user) navigate("/dashboard");
+    if (user) navigate("/dashboard");
   }, [user, loading]);
 
   return (
     <div className="login">
       <div className="login__container">
+        <img src="public/logo.svg" alt="" className="login__logo" />
+        <h1 className="login__header">Sign In</h1>
         <input
+          id="emailID"
           type="text"
           className="login__textBox"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="E-mail Address"
         />
+
         <input
+          id="password"
           type="password"
           className="login__textBox"
           value={password}
@@ -44,7 +51,7 @@ function Login() {
         <button className="login__btn login__google" onClick={signInWithGoogle}>
           Login with Google
         </button>
-        <div>
+        <div className="login__forgot-password">
           <Link to="/reset">Forgot Password</Link>
         </div>
         <div>

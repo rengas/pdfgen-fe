@@ -9,21 +9,38 @@
 .login__container {
     display: flex;
     flex-direction: column;
-    text-align: center;
     background-color: #dcdcdc;
-    padding: 30px;
+    padding: 1.875rem;
+    width: 25%;
+}
+
+.login__logo {
+    height: 3rem;
+}
+
+.login__header {
+    font-family: 'Space Grotesk';
+    font-size: 1.5rem;
+    line-height: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
 }
 
 .login__textBox {
-    padding: 10px;
-    font-size: 18px;
-    margin-bottom: 10px;
+    padding: .625rem;
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+}
+
+.login__forgot-password {
+    text-align: right;
+    margin-bottom: 1rem;
 }
 
 .login__btn {
-    padding: 10px;
-    font-size: 18px;
-    margin-bottom: 10px;
+    padding: .625rem;
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
     border: none;
     color: white;
     background-color: black;
