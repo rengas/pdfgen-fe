@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
-import TextField from '@mui/material/TextField';
 
 import { auth, logInWithEmailAndPassword, signInWithGoogle } from "../../config/firebase";
 import "./Login.css";

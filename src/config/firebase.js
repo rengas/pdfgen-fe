@@ -14,6 +14,8 @@ getDocs,
 collection,
 where,
 addDoc} from "firebase/firestore";
+import axios from "axios";
+import {getHostName} from '../api/apiClient';
 
 const firebaseConfig = {
     apiKey: "AIzaSyD6i5I5bGyxme0giPjTSs7EGpp_YDikK4M",
@@ -27,24 +29,14 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
+// const db = getFirestore(app);
+const db = {};
 
 const googleProvider = new GoogleAuthProvider();
 
 const signInWithGoogle = async () => {
   try {
-    const res = await signInWithPopup(auth, googleProvider);
-    const user = res.user;
-    const q = query(collection(db, "users"), where("uid", "==", user.uid));
-    const docs = await getDocs(q);
-    if (docs.docs.length === 0) {
-      await addDoc(collection(db, "users"), {
-        uid: user.uid,
-        name: user.displayName,
-        authProvider: "google",
-        email: user.email,
-      });
-    }
+    await signInWithPopup(auth, googleProvider);
   } catch (err) {
     console.error(err);
   }
@@ -59,16 +51,22 @@ const logInWithEmailAndPassword = async (email, password) => {
     }
 };
 
-const registerWithEmailAndPassword = async (name, email, password) => {
+const registerWithEmailAndPassword = async (email, password) => {
     try {
       const res = await createUserWithEmailAndPassword(auth, email, password);
+      console.log(res);
       const user = res.user;
-      await addDoc(collection(db, "users"), {
-        uid: user.uid,
-        name,
-        authProvider: "local",
-        email,
-      });
+      const payload = {
+        email: user.email,
+        provider: 'password',
+        firebaseId: user.uid
+      };
+      const result = await axios.create({
+        baseURL: getHostName(),
+        headers: { 'Content-Type': 'application/json',
+        'Authorization': `${user.accessToken}` },
+      }).post('/profile', payload);
+      console.log(result);
     } catch (err) {
       console.error(err);
       alert(err.message);
@@ -91,7 +89,6 @@ const logout = () => {
 
 export {
     auth,
-    db,
     signInWithGoogle,
     logInWithEmailAndPassword,
     registerWithEmailAndPassword,
