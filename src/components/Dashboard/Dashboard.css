@@ -1,28 +1,24 @@
 .dashboard {
     height: 100vh;
     width: 100vw;
+    overflow-y: auto;
+
+    @supports (overflow-y: overlay) {
+        overflow-y: overlay;
+    }
+}
+
+.dashboard__header {
+    padding: 1rem;
     display: flex;
+    gap: 1.25rem;
     align-items: center;
     justify-content: center;
+    margin: 0 20%;
+    min-height: 3.125rem;
+    width: calc(60% - 2rem);
 }
 
-.dashboard__container {
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    background-color: #dcdcdc;
-    padding: 1.875rem;
-}
-
-.dashboard__btn {
-    padding: .625rem;
-    font-size: 1.125rem;
-    margin-top: 1rem;
-    border: none;
-    color: white;
-    background-color: black;
-}
-
-.dashboard div {
-    margin-top: 7px;
+.dashboard__search--text {
+    width: 30rem;
 }

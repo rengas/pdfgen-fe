@@ -5,6 +5,7 @@ import Login  from './components/Login/Login';
 import Register from "./components/Register/Register";
 import Reset from "./components/Reset/Reset";
 import Dashboard from "./components/Dashboard/Dashboard";
+import AddDesign from "./components/AddDesign/AddDesign";
 import './App.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route exact path="/register" element={<Register />} />
           <Route exact path="/reset" element={<Reset />} />
           <Route exact path="/dashboard" element={<Dashboard />} />
+          <Route exact path="/add-design" element={<AddDesign />} />
         </Routes>
       </Router>
     </div>
