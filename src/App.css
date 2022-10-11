@@ -52,4 +52,28 @@ table {
 
 body {
 	font-family: "Inter";
+	scrollbar-color: #6969dd #e0e0e0;
+	scrollbar-width: thin;
+}
+
+/* Works on Firefox */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: #6969dd #e0e0e0;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+	width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+	background:  #e0e0e0;
+	border-radius: 20px;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: #6969dd;
+	border-radius: 20px;
+	border: 3px solid #e0e0e0;
 }
