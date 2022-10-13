@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
+import axios from 'axios';
 
+import { getHostName } from '../../api/apiClient';
 import './Profile.css';
 
 function Profile() {
@@ -7,8 +9,25 @@ function Profile() {
     const [apiKey, setApiKey] = useState('');
 
     useEffect(() => {
-
+        fetchProfile();
     }, []);
+
+    const fetchProfile = async () => {
+        const URL = `${getHostName()}/profile`;
+        const authToken = sessionStorage.getItem('token');
+        if (authToken) {
+            const config = {
+                headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
+            };
+            const res = await axios.get(URL, config);
+            const {data} = res;
+
+            if (data) {
+                setProfile(data.email);
+                setApiKey(data.firebaseId);
+            }
+        }
+    }
 
     return (
         <div className="profile">

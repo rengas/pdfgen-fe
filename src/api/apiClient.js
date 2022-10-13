@@ -14,6 +14,7 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use((config) => {
   if (window.location.hostname === 'localhost') {
     config.headers = {
+      'Content-Type': 'application/json'
     };
   }
 
