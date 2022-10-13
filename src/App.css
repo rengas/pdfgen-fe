@@ -77,3 +77,19 @@ body {
 	border-radius: 20px;
 	border: 3px solid #e0e0e0;
 }
+
+.app__header {
+	display: flex;
+	justify-content: flex-end;
+	padding: 1rem;
+}
+
+.app__logout {
+	text-decoration: none;
+	color:#1F2937;
+}
+
+.app__body.logged_in {
+	height: calc(100vh - 3rem);
+	overflow: hidden;
+}

@@ -7,15 +7,10 @@ signInWithEmailAndPassword,
 createUserWithEmailAndPassword,
 sendPasswordResetEmail,
 signOut } from "firebase/auth";
-import {
-getFirestore,
-query,
-getDocs,
-collection,
-where,
-addDoc} from "firebase/firestore";
 import axios from "axios";
 import {getHostName} from '../api/apiClient';
+
+// chrome.exe --user-data-dir="C:/Chrome dev session" --disable-web-security
 
 const firebaseConfig = {
     apiKey: "AIzaSyD6i5I5bGyxme0giPjTSs7EGpp_YDikK4M",
@@ -36,7 +31,16 @@ const googleProvider = new GoogleAuthProvider();
 
 const signInWithGoogle = async () => {
   try {
-    await signInWithPopup(auth, googleProvider);
+    const res = await signInWithPopup(auth, googleProvider);
+    console.log(res);
+    // const user = res.user;
+    // const config = {
+    //   headers: { Authorization: `Bearer ${user.accessToken}`, 'Content-Type': 'application/json' }
+    // };
+    // const url = `${getHostName()}/profile`;
+
+    // const result = await axios.post(url, config);
+    // console.log(result);
   } catch (err) {
     console.error(err);
   }
@@ -54,8 +58,9 @@ const logInWithEmailAndPassword = async (email, password) => {
 const registerWithEmailAndPassword = async (email, password) => {
     try {
       const res = await createUserWithEmailAndPassword(auth, email, password);
-      console.log(res);
       const user = res.user;
+      const token = user.accessToken;
+      sessionStorage.setItem('accessToken', token);
       const payload = {
         email: user.email,
         provider: 'password',
@@ -64,7 +69,7 @@ const registerWithEmailAndPassword = async (email, password) => {
       const result = await axios.create({
         baseURL: getHostName(),
         headers: { 'Content-Type': 'application/json',
-        'Authorization': `${user.accessToken}` },
+        'Authorization': `Bearer ${token}` },
       }).post('/profile', payload);
       console.log(result);
     } catch (err) {

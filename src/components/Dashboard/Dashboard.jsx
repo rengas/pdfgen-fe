@@ -61,7 +61,7 @@ function Dashboard() {
     if (!user) return navigate("/");
     
     if (user) {
-      console.log(user.refreshToken);
+      console.log(user, user.refreshToken);
       user.getIdToken().then(result => {
         console.log(result);
         sessionStorage.setItem('token', result);
@@ -113,7 +113,7 @@ function Dashboard() {
         <Button variant="contained">Search</Button>
        </div>
 
-       <TableContainer sx={{ maxHeight: 'calc(100vh - 8.375rem)' }}>
+       <TableContainer sx={{ maxHeight: 'calc(100vh - 11.375rem)' }}>
         <Table stickyHeader aria-label="Design Table">
           <TableHead>
             <TableRow>
