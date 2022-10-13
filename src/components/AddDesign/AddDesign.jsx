@@ -24,7 +24,7 @@ function AddDesign () {
                 <CodeEditor
                     value={code}
                     language="js"
-                    placeholder="Please enter JS code."
+                    placeholder="Please go lang template"
                     onChange={(evn) => setCode(evn.target.value)}
                     padding={15}
                     style={{

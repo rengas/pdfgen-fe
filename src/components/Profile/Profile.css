@@ -1,0 +1,37 @@
+.profile {
+    padding: 1rem;
+}
+
+.apikey {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.apikey__header {
+    font-weight: 600;
+}
+
+.apikey__generate {
+    text-decoration: none;
+    background: #0EA5E9;
+    border: 1px solid #0EA5E9;
+    border-radius: .5rem;
+    padding: .5rem .75rem;
+    color: #fff;
+}
+
+.profile-data__header {
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.profile-data__field {
+    display: flex;
+    gap: 1rem;
+}
+
+.profile-data__label {
+    font-weight: 500;
+}

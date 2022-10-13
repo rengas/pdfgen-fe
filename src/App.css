@@ -93,3 +93,41 @@ body {
 	height: calc(100vh - 3rem);
 	overflow: hidden;
 }
+
+.app {
+	display: flex;
+	height: 100vh;
+}
+
+.app__shell {
+	display: flex;
+	flex-direction: column;
+}
+
+.app__logo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 2rem;
+}
+
+.app__logo img {
+	height: 3rem;
+}
+
+.app__menus {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.app__menus--link {
+	text-decoration: none;
+	color: #fff;
+}
+
+.sidebar {
+	background: #111827;
+	padding: 1.5rem 1rem;
+	width: 7.25rem;
+}

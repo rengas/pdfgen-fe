@@ -1,11 +1,7 @@
 .dashboard {
     height: 100vh;
-    width: 100vw;
+    width: 100%;
     overflow-y: auto;
-
-    @supports (overflow-y: overlay) {
-        overflow-y: overlay;
-    }
 }
 
 .dashboard__header {
@@ -14,9 +10,8 @@
     gap: 1.25rem;
     align-items: center;
     justify-content: center;
-    margin: 0 20%;
+    margin: 0 10%;
     min-height: 3.125rem;
-    width: calc(60% - 2rem);
 }
 
 .dashboard__search--text {
