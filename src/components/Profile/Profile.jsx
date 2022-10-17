@@ -10,6 +10,7 @@ function Profile() {
 
     useEffect(() => {
         fetchProfile();
+        handleGenerate();
     }, []);
 
     const fetchProfile = async () => {
@@ -24,7 +25,22 @@ function Profile() {
 
             if (data) {
                 setProfile(data.email);
-                setApiKey(data.firebaseId);
+            }
+        }
+    }
+
+    const handleGenerate = async () => {
+        const URL = `${getHostName()}/generate`;
+        const authToken = sessionStorage.getItem('token');
+        if (authToken) {
+            const config = {
+                headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
+            };
+            const res = await axios.get(URL, config);
+            const {data} = res;
+
+            if (data) {
+                setApiKey(data.designId);
             }
         }
     }
@@ -35,7 +51,7 @@ function Profile() {
                 <div className="apikey__header">Your API KEY:</div>
                 {apiKey && <div className="apikey__value">{apiKey}</div>}
                 {!apiKey && <div className="apikey__value">&nbsp;</div>}
-                <a href="javascript:void(0)" className="apikey__generate">Generate</a>
+                <a href="javascript:void(0)" className="apikey__generate" onClick={handleGenerate}>Generate</a>
             </div>
 
             <div className="profile__body profile-data">

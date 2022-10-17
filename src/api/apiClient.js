@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Run this command in terminal to fix CORs in localhost: /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --user-data-dir="/tmp/chrome_dev_session" --disable-web-security
+// Run this command in terminal to fix CORs in localhost: chrome.exe --user-data-dir="C:/Chrome dev session" --disable-web-security
 
 export const getHostName = () => {
     return 'https://pdfgen-stg.onrender.com';

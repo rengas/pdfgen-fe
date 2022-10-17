@@ -19,9 +19,10 @@ function Shell() {
     useEffect(() => {
         if (loading) return;
 
-        if (!user) {
-            return navigate("/")
-        } else if (user) {
+        // if (!user) {
+        //     return navigate("/")
+        // } else
+        if (user) {
             return navigate('/dashboard');
         }
     }, [user, loading]);
