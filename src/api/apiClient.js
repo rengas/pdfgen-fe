@@ -3,7 +3,7 @@ import axios from 'axios';
 // Run this command in terminal to fix CORs in localhost: chrome.exe --user-data-dir="C:/Chrome dev session" --disable-web-security
 
 export const getHostName = () => {
-    return 'https://pdfgen-stg.onrender.com';
+    return 'https://api.staging.pdfgen.pro';
 };
 
 export const apiClient = axios.create({
