@@ -22,10 +22,15 @@ function Shell() {
         // if (!user) {
         //     return navigate("/")
         // } else
-        if (user) {
+        if (user && !loading) {
             return navigate('/dashboard');
         }
     }, [user, loading]);
+
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    }
 
     return (
         <>
@@ -46,7 +51,7 @@ function Shell() {
             <div className={`app__shell ${user ? 'logged__in' : 'logged__out'}`}>
                 {
                     user && <div className="app__header">
-                        <a href="javascript:void(0)" className="app__logout" onClick={logout}>Logout</a>
+                        <a href="javascript:void(0)" className="app__logout" onClick={() => handleLogout()}>Logout</a>
                     </div>
                 }
                 <div className={`app__body ${user ? 'logged_in' : ''}`}>

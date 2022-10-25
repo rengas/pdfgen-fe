@@ -4,17 +4,15 @@ import Button from '@mui/material/Button';
 import { useNavigate } from "react-router-dom";
 
 import { getHostName } from '../../api/apiClient';
+import ErrorDialog from '../ErrorDialog/ErrorDialog';
 import axios from 'axios';
 import "./AddDesign.css";
 
 function AddDesign () {
-    const [code, setCode] = useState(
-        `function add(a, b) {\n  return a + b;\n}`
-    );
-
-    const [jsonCode, setJsonCode] = useState(
-        `"{"name":"hello","age":"27"}"`
-    );
+    const [code, setCode] = useState(``);
+    const [jsonCode, setJsonCode] = useState(``);
+    const [errMsg, setErrMsg] = useState('');
+    const [errDlgOpen, setErrDlgOpen] = useState(false);
 
     const navigate = useNavigate();
 
@@ -22,30 +20,85 @@ function AddDesign () {
         navigate("/dashboard");
     }
 
+    const validatePayload = () => {
+        if (code && jsonCode) {
+            return true;
+        }
+
+        if (!code) {
+            setErrMsg('Please enter a valid golang template');
+        } else if (!jsonCode) {
+            setErrMsg('Please enter a valid json');
+        }
+        return false;
+    }
+
+    const validatePDF = async () => {
+        const URL = `${getHostName()}/validate`;
+        const authToken = sessionStorage.getItem('token');
+        if (validatePayload()) {
+            const payload = {
+                name: 'Sample Name',
+                profileId: "2824799f-33b0-488a-b5fc-fa279c3af17f",
+                design: window.btoa(code),
+                fields: JSON.parse(jsonCode),
+            };
+
+            if (authToken) {
+                const config = {
+                    headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
+                };
+                const res = await axios.post(URL, payload, config);
+                const {data} = res;
+        
+                if (data) {
+                    console.log(data);
+                }
+            }
+        } else {
+            setErrDlgOpen(true);
+        }
+    }
+
     const handleSave = async () => {
         const URL = `${getHostName()}/design`;
         const authToken = sessionStorage.getItem('token');
-        const payload = {};
-        if (authToken) {
-            const config = {
-                headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
+        if (validatePayload()) {
+            const payload = {
+                name: 'Sample Name',
+                profileId: "2824799f-33b0-488a-b5fc-fa279c3af17f",
+                design: window.btoa(code),
+                fields: JSON.parse(jsonCode),
             };
-            const res = await axios.post(URL, payload, config);
-            const {data} = res;
-    
-            if (data) {
-                console.log(data);
+
+            if (authToken) {
+                const config = {
+                    headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
+                };
+                const res = await axios.post(URL, payload, config);
+                const {data} = res;
+        
+                if (data) {
+                    console.log(data);
+                }
             }
+        } else {
+            setErrDlgOpen(true);
         }
+    }
+
+    const handleClose = () => {
+        setErrDlgOpen(false);
     }
 
     return (
         <div className="add-design">
             <div className="add-design__editor">
                 <CodeEditor
+                    className="add-design__editor--area"
                     value={code}
                     language="js"
-                    placeholder="Please go lang template"
+                    placeholder="Please enter golang template"
                     onChange={(evn) => setCode(evn.target.value)}
                     padding={15}
                     style={{
@@ -59,6 +112,7 @@ function AddDesign () {
             </div>
             <div className="add-design__html">
                 <CodeEditor
+                    className="add-design__html--area"
                     value={jsonCode}
                     language="json"
                     placeholder="Please enter JSON."
@@ -74,12 +128,14 @@ function AddDesign () {
                 />
             </div>
             <div className="add-design__action">
-                <Button variant="contained">Preview</Button>
+                <Button variant="contained" onClick={validatePDF}>Preview</Button>
                 <Button variant="contained">Download pdf</Button>
                 <Button variant="contained" onClick={handleSave}>Save</Button>
                 <Button variant="contained" onClick={navigateToDashboard}>Designs</Button>
             </div>
             <div className="add-design__preview">&nbsp;</div>
+
+            <ErrorDialog errorMsg={errMsg} open={errDlgOpen} onClose={handleClose} />
         </div>
     );
 }

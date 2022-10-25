@@ -14,6 +14,13 @@
     flex: 0 0 25%;
 }
 
+.add-design__html--area,
+.add-design__editor--area {
+    height: calc(100vh - 5rem) !important;
+    overflow: overlay !important;
+    max-width: calc(((100vw - 7.25rem) / 4) - .9375rem);
+}
+
 .add-design__action {
     flex: 0 0 calc(17.5% - 3.75rem);
     display: flex;

@@ -24,17 +24,17 @@ const columns = [
   { id: 'id', label: 'ID', minWidth: 170 },
   { id: 'name', label: 'NAME', minWidth: 100 },
   {
-    id: 'created_at',
+    id: 'createdAt',
     label: 'CREATED AT',
     minWidth: 170,
   },
   {
-    id: 'updated_at',
+    id: 'updatedAt',
     label: 'UPDATED AT',
     minWidth: 150,
   },
   {
-    id: 'pdf',
+    id: 'name',
     label: 'GENERATED PDF',
     minWidth: 150
   },
@@ -51,25 +51,14 @@ function Dashboard() {
   const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rows, setRows] = useState([]);
   const navigate = useNavigate();
   const height = 40;
   const labelOffset = -6;
-  const rows = [
-    {id: '3928493578-dfd76fd8-df8ydfyd-fdjfhd898r1', name: 'Invoice Singapore', created_at: '21-09-2022', updated_at: '21-09-2022', pdf: 'download sample.pdf'},
-    {id: '3928493578-dfd76fd8-df8ydfyd-fdjfhd898r2', name: 'Invoice Singapore', created_at: '21-09-2022', updated_at: '21-09-2022', pdf: 'download sample.pdf'},
-    {id: '3928493578-dfd76fd8-df8ydfyd-fdjfhd898r3', name: 'Invoice Singapore', created_at: '21-09-2022', updated_at: '21-09-2022', pdf: 'download sample.pdf'},
-    {id: '3928493578-dfd76fd8-df8ydfyd-fdjfhd898r4', name: 'Invoice Singapore', created_at: '21-09-2022', updated_at: '21-09-2022', pdf: 'download sample.pdf'},
-    {id: '3928493578-dfd76fd8-df8ydfyd-fdjfhd898r5', name: 'Invoice Singapore', created_at: '21-09-2022', updated_at: '21-09-2022', pdf: 'download sample.pdf'},
-    {id: '3928493578-dfd76fd8-df8ydfyd-fdjfhd898r6', name: 'Invoice Singapore', created_at: '21-09-2022', updated_at: '21-09-2022', pdf: 'download sample.pdf'},
-    {id: '3928493578-dfd76fd8-df8ydfyd-fdjfhd898r7', name: 'Invoice Singapore', created_at: '21-09-2022', updated_at: '21-09-2022', pdf: 'download sample.pdf'},
-    {id: '3928493578-dfd76fd8-df8ydfyd-fdjfhd898r8', name: 'Invoice Singapore', created_at: '21-09-2022', updated_at: '21-09-2022', pdf: 'download sample.pdf'},
-    {id: '3928493578-dfd76fd8-df8ydfyd-fdjfhd898r9', name: 'Invoice Singapore', created_at: '21-09-2022', updated_at: '21-09-2022', pdf: 'download sample.pdf'},
-    {id: '3928493578-dfd76fd8-df8ydfyd-fdjfhd898r0', name: 'Invoice Singapore', created_at: '21-09-2022', updated_at: '21-09-2022', pdf: 'download sample.pdf'},
-  ];
 
   useEffect(() => {
     if (loading) return;
-    // if (!user) return navigate("/");
+    if (!user) return navigate("/");
     
     if (user) {
       sessionStorage.setItem('token', user.accessToken);
@@ -78,7 +67,7 @@ function Dashboard() {
   }, [user, loading]);
 
   const fetchDesigns = async () => {
-    const URL = `${getHostName()}/design?count=10&page=1&search=in`;
+    const URL = `${getHostName()}/design?count=10&page=1`;
     const authToken = sessionStorage.getItem('token');
     if (authToken) {
         const config = {
@@ -88,7 +77,7 @@ function Dashboard() {
         const {data} = res;
 
         if (data) {
-            console.log(data);
+            setRows(data);
         }
     }
   }
@@ -197,9 +186,9 @@ function Dashboard() {
         <Table stickyHeader aria-label="Design Table">
           <TableHead>
             <TableRow>
-              {columns.map((column) => (
+              {columns.map((column, columnHeadIndex) => (
                 <TableCell
-                  key={column.id}
+                  key={column.id + column.label + columnHeadIndex}
                   align={column.align}
                   style={{ minWidth: column.minWidth, backgroundColor: '#F3F4F6', color: '#6B7280', fontWeight: 600, padding: '.5rem' }}
                 >
@@ -211,29 +200,31 @@ function Dashboard() {
           <TableBody>
             {rows
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
+              .map((row, index) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                    {columns.map((column) => {
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id + index}>
+                    {columns.map((column, columnIndex) => {
                       const value = row[column.id];
                       return (
-                        column.label === 'ACTION' ? <TableCell key={column.id} style={{
+                        column.label === 'ACTION' ? <TableCell key={row.id + value + columnIndex} style={{
                           display: 'flex',
                           gap: '.5rem',
                           padding: '.5rem'
                         }}>
-                            <IconButton aria-label="delete" onClick={() => handleDelete(row)}>
+                            <IconButton aria-label="delete" key={row.id + 'delete-btn' + columnIndex} 
+                              onClick={() => handleDelete(row)}>
                               <DeleteIcon fontSize="small" />
                             </IconButton>
 
-                            <IconButton aria-label="edit" onClick={() => handleEdit(row)}>
+                            <IconButton aria-label="edit"  key={row.id + 'edit-btn' + columnIndex} 
+                              onClick={() => handleEdit(row)}>
                               <EditIcon fontSize="small" />
                             </IconButton>
 
                             {/* <IconButton aria-label="view">
                               <TableViewIcon />
                             </IconButton> */}
-                          </TableCell> : <TableCell key={column.id}  style={{padding: '.5rem'}}>
+                          </TableCell> : <TableCell key={row.id + value + columnIndex} style={{padding: '.5rem'}}>
                           {value}
                         </TableCell>
                       )
