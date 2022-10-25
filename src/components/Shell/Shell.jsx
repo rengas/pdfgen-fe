@@ -19,10 +19,9 @@ function Shell() {
     useEffect(() => {
         if (loading) return;
 
-        // if (!user) {
-        //     return navigate("/")
-        // } else
-        if (user && !loading) {
+        if (!user && !loading) {
+            return navigate("/")
+        } else if (user && !loading) {
             return navigate('/dashboard');
         }
     }, [user, loading]);

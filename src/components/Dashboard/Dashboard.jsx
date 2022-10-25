@@ -19,6 +19,7 @@ import axios from 'axios';
 import "./Dashboard.css";
 import { getHostName } from '../../api/apiClient';
 import { auth } from "../../config/firebase";
+import ErrorDialog from '../ErrorDialog/ErrorDialog';
 
 const columns = [
   { id: 'id', label: 'ID', minWidth: 170 },
@@ -53,12 +54,14 @@ function Dashboard() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState([]);
   const navigate = useNavigate();
+  const [errMsg, setErrMsg] = useState('');
+  const [errDlgOpen, setErrDlgOpen] = useState(false);
   const height = 40;
   const labelOffset = -6;
 
   useEffect(() => {
     if (loading) return;
-    if (!user) return navigate("/");
+    // if (!user) return navigate("/");
     
     if (user) {
       sessionStorage.setItem('token', user.accessToken);
@@ -67,18 +70,23 @@ function Dashboard() {
   }, [user, loading]);
 
   const fetchDesigns = async () => {
-    const URL = `${getHostName()}/design?count=10&page=1`;
-    const authToken = sessionStorage.getItem('token');
-    if (authToken) {
-        const config = {
-            headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
-        };
-        const res = await axios.get(URL, config);
-        const {data} = res;
-
-        if (data) {
-            setRows(data);
-        }
+    try {
+      const URL = `${getHostName()}/design?count=10&page=1`;
+      const authToken = sessionStorage.getItem('token');
+      if (authToken) {
+          const config = {
+              headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
+          };
+          const res = await axios.get(URL, config);
+          const {data} = res;
+  
+          if (data) {
+              setRows(data);
+          }
+      }
+    } catch (err) {
+      setErrMsg(err?.message);
+      setErrDlgOpen(true);
     }
   }
 
@@ -105,35 +113,45 @@ function Dashboard() {
 
   const handleSearch = async () => {
     if (searchTerm) {
-      const URL = `${getHostName()}/design?q=${searchTerm}`;
-      const authToken = sessionStorage.getItem('token');
-      if (authToken) {
-          const config = {
-              headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
-          };
-          const res = await axios.get(URL, config);
-          const {data} = res;
-
-          if (data) { 
-              console.log(data);
-          }
+      try {
+        const URL = `${getHostName()}/design?q=${searchTerm}`;
+        const authToken = sessionStorage.getItem('token');
+        if (authToken) {
+            const config = {
+                headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
+            };
+            const res = await axios.get(URL, config);
+            const {data} = res;
+  
+            if (data) { 
+                console.log(data);
+            }
+        }
+      } catch (err) {
+        setErrMsg(err?.message);
+        setErrDlgOpen(true);
       }
     }
   }
 
   const handleDelete = async(row) => {
-    const URL = `${getHostName()}/design/${row.id}`;
-    const authToken = sessionStorage.getItem('token');
-    if (authToken) {
-        const config = {
-            headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
-        };
-        const res = await axios.delete(URL, config);
-        const {data} = res;
-
-        if (data) { 
-            console.log(data);
-        }
+    try {
+      const URL = `${getHostName()}/design/${row.id}`;
+      const authToken = sessionStorage.getItem('token');
+      if (authToken) {
+          const config = {
+              headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
+          };
+          const res = await axios.delete(URL, config);
+          const {data} = res;
+  
+          if (data) { 
+              console.log(data);
+          }
+      }
+    } catch (err) {
+      setErrMsg(err?.message);
+      setErrDlgOpen(true);
     }
   }
 
@@ -151,6 +169,10 @@ function Dashboard() {
             console.log(data);
         }
     }
+  }
+
+  const handleClose = () => {
+    setErrDlgOpen(false);
   }
 
   return (
@@ -244,6 +266,7 @@ function Dashboard() {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+      <ErrorDialog errorMsg={errMsg} open={errDlgOpen} onClose={handleClose} />
      </div>
   );
 }

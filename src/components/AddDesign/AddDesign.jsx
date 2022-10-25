@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import CodeEditor from '@uiw/react-textarea-code-editor';
 import Button from '@mui/material/Button';
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 import { getHostName } from '../../api/apiClient';
 import ErrorDialog from '../ErrorDialog/ErrorDialog';
-import axios from 'axios';
+import MessageDialog from '../MessageDialog/MessageDialog';
 import "./AddDesign.css";
 
 function AddDesign () {
@@ -13,6 +14,8 @@ function AddDesign () {
     const [jsonCode, setJsonCode] = useState(``);
     const [errMsg, setErrMsg] = useState('');
     const [errDlgOpen, setErrDlgOpen] = useState(false);
+    const [msg, setMsg] = useState('');
+    const [msgDlgOpen, setMsgDlgOpen] = useState(false);
 
     const navigate = useNavigate();
 
@@ -34,61 +37,74 @@ function AddDesign () {
     }
 
     const validatePDF = async () => {
-        const URL = `${getHostName()}/validate`;
-        const authToken = sessionStorage.getItem('token');
-        if (validatePayload()) {
-            const payload = {
-                name: 'Sample Name',
-                profileId: "2824799f-33b0-488a-b5fc-fa279c3af17f",
-                design: window.btoa(code),
-                fields: JSON.parse(jsonCode),
-            };
-
-            if (authToken) {
-                const config = {
-                    headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
+        try {
+            const URL = `${getHostName()}/validate`;
+            const authToken = sessionStorage.getItem('token');
+            if (validatePayload()) {
+                const payload = {
+                    name: 'Sample Name',
+                    profileId: "2824799f-33b0-488a-b5fc-fa279c3af17f",
+                    design: window.btoa(code),
+                    fields: JSON.parse(jsonCode),
                 };
-                const res = await axios.post(URL, payload, config);
-                const {data} = res;
-        
-                if (data) {
-                    console.log(data);
+
+                if (authToken) {
+                    const config = {
+                        headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
+                    };
+                    const res = await axios.post(URL, payload, config);
+                    const {data} = res;
+            
+                    if (data) {
+                        console.log(data);
+                        setMsg(data?.message);
+                        setMsgDlgOpen(true);
+                    }
                 }
+            } else {
+                setErrDlgOpen(true);
             }
-        } else {
+        } catch (err) {
+            setErrMsg(err?.message);
             setErrDlgOpen(true);
         }
     }
 
     const handleSave = async () => {
-        const URL = `${getHostName()}/design`;
-        const authToken = sessionStorage.getItem('token');
-        if (validatePayload()) {
-            const payload = {
-                name: 'Sample Name',
-                profileId: "2824799f-33b0-488a-b5fc-fa279c3af17f",
-                design: window.btoa(code),
-                fields: JSON.parse(jsonCode),
-            };
-
-            if (authToken) {
-                const config = {
-                    headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
+        try {
+            const URL = `${getHostName()}/design`;
+            const authToken = sessionStorage.getItem('token');
+            if (validatePayload()) {
+                const payload = {
+                    name: 'Sample Name',
+                    profileId: "2824799f-33b0-488a-b5fc-fa279c3af17f",
+                    design: window.btoa(code),
+                    fields: JSON.parse(jsonCode),
                 };
-                const res = await axios.post(URL, payload, config);
-                const {data} = res;
-        
-                if (data) {
-                    console.log(data);
+
+                if (authToken) {
+                    const config = {
+                        headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
+                    };
+                    const res = await axios.post(URL, payload, config);
+                    const {data} = res;
+            
+                    if (data) {
+                        console.log(data);
+                    }
                 }
+            } else {
+                setErrDlgOpen(true);
             }
-        } else {
+        } catch(err) {
+            setErrMsg(err?.message);
             setErrDlgOpen(true);
         }
     }
 
     const handleClose = () => {
         setErrDlgOpen(false);
+        setMsgDlgOpen(false);
     }
 
     return (
@@ -136,6 +152,7 @@ function AddDesign () {
             <div className="add-design__preview">&nbsp;</div>
 
             <ErrorDialog errorMsg={errMsg} open={errDlgOpen} onClose={handleClose} />
+            <MessageDialog msg={msg} open={msgDlgOpen} onClose={handleClose} />
         </div>
     );
 }

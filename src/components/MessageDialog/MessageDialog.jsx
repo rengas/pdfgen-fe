@@ -7,14 +7,14 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import { makeStyles } from '@mui/styles';
 
-import "./ErrorDialog.css";
+import "./MessageDialog.css";
 
 const useStyles = makeStyles({
-  paper: { minWidth: "35%" }
+  paper: { minWidth: "500px" }
 });
 
-export default function ErrorDialog(props) {
-    const { onClose, errorMsg, open } = props;
+export default function MessageDialog(props) {
+    const { onClose, msg, open } = props;
     const classes = useStyles(props);
   
     const handleClose = () => {
@@ -23,10 +23,10 @@ export default function ErrorDialog(props) {
   
     return (
       <Dialog onClose={handleClose} open={open} classes={{ paper: classes.paper}}>
-        <DialogTitle>Error</DialogTitle>
+        <DialogTitle>Message</DialogTitle>
         
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">{errorMsg}</DialogContentText>
+          <DialogContentText id="alert-dialog-description">{msg}</DialogContentText>
         </DialogContent>
 
         <DialogActions>
@@ -38,8 +38,8 @@ export default function ErrorDialog(props) {
     );
   }
   
-  ErrorDialog.propTypes = {
+  MessageDialog.propTypes = {
     onClose: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
-    errorMsg: PropTypes.string.isRequired,
+    msg: PropTypes.string.isRequired,
   };
