@@ -57,7 +57,7 @@ function AddDesign () {
             
                     if (data) {
                         console.log(data);
-                        setMsg(data?.message);
+                        setMsg(data?.Message);
                         setMsgDlgOpen(true);
                     }
                 }
@@ -95,6 +95,31 @@ function AddDesign () {
                 }
             } else {
                 setErrDlgOpen(true);
+            }
+        } catch(err) {
+            setErrMsg(err?.message);
+            setErrDlgOpen(true);
+        }
+    }
+
+    const handleDownload = () => {
+        try {
+            const URL = `${getHostName()}/generate`;
+            const authToken = sessionStorage.getItem('token');
+            const payload = {
+                designId:"526f77ef-cbf0-4420-b0fc-1d0ba89fd8ee"
+            };
+
+            if (authToken) {
+                const config = {
+                    headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
+                };
+                const res = await axios.post(URL, payload, config);
+                const {data} = res;
+        
+                if (data) {
+                    console.log(data);
+                }
             }
         } catch(err) {
             setErrMsg(err?.message);
@@ -145,7 +170,7 @@ function AddDesign () {
             </div>
             <div className="add-design__action">
                 <Button variant="contained" onClick={validatePDF}>Preview</Button>
-                <Button variant="contained">Download pdf</Button>
+                <Button variant="contained" onClick={handleDownload}>Download pdf</Button>
                 <Button variant="contained" onClick={handleSave}>Save</Button>
                 <Button variant="contained" onClick={navigateToDashboard}>Designs</Button>
             </div>
