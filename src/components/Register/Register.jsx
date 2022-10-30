@@ -1,28 +1,55 @@
 import React, { useEffect, useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios';
 
-import {
-  auth,
-  registerWithEmailAndPassword,
-  signInWithGoogle,
-} from "../../config/firebase";
+import { getHostName } from '../../api/apiClient';
+import ErrorDialog from '../ErrorDialog/ErrorDialog';
+import MessageDialog from '../MessageDialog/MessageDialog';
 import "./Register.css";
 
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [user, loading, error] = useAuthState(auth);
+  const [errMsg, setErrMsg] = useState('');
+  const [errDlgOpen, setErrDlgOpen] = useState(false);
+  const [msg, setMsg] = useState('');
+  const [msgDlgOpen, setMsgDlgOpen] = useState(false);
   const navigate = useNavigate();
   
   const register = () => {
-    registerWithEmailAndPassword(email, password);
+    try {
+      const URL = `${getHostName()}/register`;
+      if (validatePayload()) {
+          const payload = {
+              email,
+              password
+          };
+          const res = await axios.post(URL, payload);
+          const {data} = res;
+
+          if (data) {
+              console.log(data);
+              setMsg(data?.Message);
+              setMsgDlgOpen(true);
+          }
+      } else {
+          setErrDlgOpen(true);
+      }
+    } catch (err) {
+        setErrMsg(err?.message);
+        setErrDlgOpen(true);
+    }
   };
 
+  const handleClose = () => {
+    setErrDlgOpen(false);
+    setMsgDlgOpen(false);
+  }
+
   useEffect(() => {
-    if (loading) return;
-    if (user) navigate("/dashboard");
-  }, [user, loading]);
+    // if (loading) return;
+    // if (user) navigate("/dashboard");
+  }, []);
 
   return (
     <div className="register">
@@ -54,6 +81,9 @@ function Register() {
           Already have an account? <Link to="/">Login</Link> now.
         </div>
       </div>
+
+      <ErrorDialog errorMsg={errMsg} open={errDlgOpen} onClose={handleClose} />
+      <MessageDialog msg={msg} open={msgDlgOpen} onClose={handleClose} />
     </div>
   );
 }
