@@ -15,6 +15,19 @@ function Register() {
   const [msg, setMsg] = useState('');
   const [msgDlgOpen, setMsgDlgOpen] = useState(false);
   const navigate = useNavigate();
+
+  const validatePayload = () => {
+    if (email && password) {
+        return true;
+    }
+
+    if (!email) {
+        setErrMsg('Please enter a valid email');
+    } else if (!password) {
+        setErrMsg('Please enter a valid password');
+    }
+    return false;
+  }
   
   const register = () => {
     try {
