@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 import CodeEditor from '@uiw/react-textarea-code-editor';
 import Button from '@mui/material/Button';
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
 
-import { getHostName } from '../../api/apiClient';
 import ErrorDialog from '../ErrorDialog/ErrorDialog';
 import MessageDialog from '../MessageDialog/MessageDialog';
+import designService from '../../services/design.service';
 import "./AddDesign.css";
 
 function AddDesign () {
@@ -36,44 +35,36 @@ function AddDesign () {
         return false;
     }
 
-    const validatePDF = async () => {
-        try {
-            const URL = `${getHostName()}/validate`;
-            const authToken = sessionStorage.getItem('token');
-            if (validatePayload()) {
-                const payload = {
-                    name: 'Sample Name',
-                    profileId: "2824799f-33b0-488a-b5fc-fa279c3af17f",
-                    design: window.btoa(code),
-                    fields: JSON.parse(jsonCode),
-                };
+    const validatePDF= async() => {
+        if (validatePayload()) {
+            const payload = {
+                name: 'Sample Name',
+                profileId: "2824799f-33b0-488a-b5fc-fa279c3af17f",
+                design: window.btoa(code),
+                fields: JSON.parse(jsonCode),
+            };
 
-                if (authToken) {
-                    const config = {
-                        headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
-                    };
-                    const res = await axios.post(URL, payload, config);
-                    const {data} = res;
-            
-                    if (data) {
-                        console.log(data);
-                        setMsg(data?.Message);
-                        setMsgDlgOpen(true);
-                    }
+            try {
+                const res = await designService.validateDesign(payload);
+                const {data} = res;
+        
+                if (data) {
+                    console.log(data);
+                    setMsg(data?.Message);
+                    setMsgDlgOpen(true);
                 }
-            } else {
+            } catch (err) {
+                setErrMsg(err?.message);
                 setErrDlgOpen(true);
             }
-        } catch (err) {
-            setErrMsg(err?.message);
+        } else {
             setErrDlgOpen(true);
         }
+    
     }
 
     const handleSave = async () => {
         try {
-            const URL = `${getHostName()}/design`;
-            const authToken = sessionStorage.getItem('token');
             if (validatePayload()) {
                 const payload = {
                     name: 'Sample Name',
@@ -82,16 +73,12 @@ function AddDesign () {
                     fields: JSON.parse(jsonCode),
                 };
 
-                if (authToken) {
-                    const config = {
-                        headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
-                    };
-                    const res = await axios.post(URL, payload, config);
-                    const {data} = res;
-            
-                    if (data) {
-                        console.log(data);
-                    }
+                
+                const res = await designService.createDesign(payload);
+                const {data} = res;
+        
+                if (data) {
+                    console.log(data);
                 }
             } else {
                 setErrDlgOpen(true);
@@ -102,24 +89,18 @@ function AddDesign () {
         }
     }
 
-    const handleDownload = () => {
+    const handleDownload = async () => {
         try {
-            const URL = `${getHostName()}/generate`;
-            const authToken = sessionStorage.getItem('token');
             const payload = {
                 designId:"526f77ef-cbf0-4420-b0fc-1d0ba89fd8ee"
             };
 
-            if (authToken) {
-                const config = {
-                    headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
-                };
-                const res = await axios.post(URL, payload, config);
-                const {data} = res;
-        
-                if (data) {
-                    console.log(data);
-                }
+            
+            const res = await designService.generatePDF(payload);
+            const {data} = res;
+    
+            if (data) {
+                console.log(data);
             }
         } catch(err) {
             setErrMsg(err?.message);

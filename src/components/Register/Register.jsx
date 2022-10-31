@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from 'axios';
 
-import { getHostName } from '../../api/apiClient';
 import ErrorDialog from '../ErrorDialog/ErrorDialog';
 import MessageDialog from '../MessageDialog/MessageDialog';
+import authService from '../../services/auth.service';
 import "./Register.css";
 
 function Register() {
@@ -29,21 +28,26 @@ function Register() {
     return false;
   }
   
-  const register = () => {
+  const register = async() => {
     try {
-      const URL = `${getHostName()}/register`;
       if (validatePayload()) {
           const payload = {
               email,
               password
           };
-          const res = await axios.post(URL, payload);
+          const res = await authService.register(payload);
           const {data} = res;
 
           if (data) {
               console.log(data);
               setMsg(data?.Message);
               setMsgDlgOpen(true);
+              navigate('/');
+
+              setTimeout(() => {
+                setMsg('');
+                setMsgDlgOpen(false);
+              }, 2000);
           }
       } else {
           setErrDlgOpen(true);
@@ -58,11 +62,6 @@ function Register() {
     setErrDlgOpen(false);
     setMsgDlgOpen(false);
   }
-
-  useEffect(() => {
-    // if (loading) return;
-    // if (user) navigate("/dashboard");
-  }, []);
 
   return (
     <div className="register">
@@ -84,12 +83,12 @@ function Register() {
         <button className="register__btn" onClick={register}>
           Register
         </button>
-        <button
+        {/* <button
           className="register__btn register__google"
-          onClick={signInWithGoogle}
+          onClick={register}
         >
           Register with Google
-        </button>
+        </button> */}
         <div>
           Already have an account? <Link to="/">Login</Link> now.
         </div>

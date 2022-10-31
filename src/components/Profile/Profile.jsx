@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios';
+import { useState, useEffect } from 'react';
 
-import { getHostName } from '../../api/apiClient';
+import profileService from '../../services/profile.service';
 import './Profile.css';
 
 function Profile() {
@@ -10,38 +9,14 @@ function Profile() {
 
     useEffect(() => {
         fetchProfile();
-        handleGenerate();
     }, []);
 
     const fetchProfile = async () => {
-        const URL = `${getHostName()}/profile`;
-        const authToken = sessionStorage.getItem('token');
-        if (authToken) {
-            const config = {
-                headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
-            };
-            const res = await axios.get(URL, config);
-            const {data} = res;
+        const res = await profileService.getUserProfile();
+        const {data} = res;
 
-            if (data) {
-                setProfile(data.email);
-            }
-        }
-    }
-
-    const handleGenerate = async () => {
-        const URL = `${getHostName()}/generate`;
-        const authToken = sessionStorage.getItem('token');
-        if (authToken) {
-            const config = {
-                headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
-            };
-            const res = await axios.get(URL, config);
-            const {data} = res;
-
-            if (data) {
-                setApiKey(data.designId);
-            }
+        if (data) {
+            setProfile(data.email);
         }
     }
 

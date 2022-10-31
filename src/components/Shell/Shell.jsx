@@ -1,5 +1,4 @@
 import { Route, Routes } from "react-router-dom";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from 'react'
 
@@ -9,26 +8,28 @@ import Reset from "../Reset/Reset";
 import Dashboard from "../Dashboard/Dashboard";
 import AddDesign from "../AddDesign/AddDesign";
 import Profile from "../Profile/Profile";
-import { auth, logout } from "../../config/firebase";
+import authService from '../../services/auth.service';
+import { useApp } from '../../contexts/app.context';
 import "./Shell.css";
 
 function Shell() {
-    const [user, loading, error] = useAuthState(auth);
+    const [user, setUser] = useState(null);
+    const {appState} = useApp();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (loading) return;
+        fetchUser();
+    }, [appState.profileStatus]);
 
-        if (!user && !loading) {
-            return navigate("/")
-        } else if (user && !loading) {
-            return navigate('/dashboard');
-        }
-    }, [user, loading]);
+    const fetchUser = () => {
+        const user = authService.getCurrentUser();
+        setUser(user);
+    }
 
     const handleLogout = () => {
-        logout();
+        authService.logout();
         navigate('/');
+        fetchUser();
     }
 
     return (

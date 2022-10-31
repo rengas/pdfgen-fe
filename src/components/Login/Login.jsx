@@ -1,23 +1,82 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthState } from "react-firebase-hooks/auth";
 
-import { auth, logInWithEmailAndPassword, signInWithGoogle } from "../../config/firebase";
+import ErrorDialog from '../ErrorDialog/ErrorDialog';
+import MessageDialog from '../MessageDialog/MessageDialog';
+import authService from '../../services/auth.service';
+import { useApp } from '../../contexts/app.context';
 import "./Login.css";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [user, loading, error] = useAuthState(auth);
+  const [errMsg, setErrMsg] = useState('');
+  const [errDlgOpen, setErrDlgOpen] = useState(false);
+  const [msg, setMsg] = useState('');
+  const [msgDlgOpen, setMsgDlgOpen] = useState(false);
+  const {dispatch} = useApp();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (loading) {
-      // maybe trigger a loading screen
-      return;
+    return () => {
+      cleanUpPage();
     }
-    if (user) navigate("/dashboard");
-  }, [user, loading]);
+  }, []);
+
+  const cleanUpPage = () => {
+    setPassword('');
+    setEmail('');
+    setErrMsg('');
+    setMsg('');
+  }
+
+  const handleClose = () => {
+    setErrDlgOpen(false);
+    setMsgDlgOpen(false);
+  }
+
+  const validatePayload = () => {
+    if (email && password) {
+        return true;
+    }
+
+    if (!email) {
+        setErrMsg('Please enter a valid email');
+    } else if (!password) {
+        setErrMsg('Please enter a valid password');
+    }
+    return false;
+  }
+
+  const login = async () => {
+    try {
+      if (validatePayload()) {
+          const payload = {
+              email,
+              password
+          };
+          const res = await authService.login(payload);
+          const {data} = res;
+
+          if (data) {
+            console.log(data);
+            setMsg(data?.Message);
+            setMsgDlgOpen(true);
+            dispatch({type: 'TOGGLE_PROFILE_STATUS'})
+            navigate('/dashboard');
+
+            setTimeout(() => {
+              setMsgDlgOpen(false);
+            }, 2000);
+          }
+      } else {
+          setErrDlgOpen(true);
+      }
+    } catch (err) {
+        setErrMsg(err?.message);
+        setErrDlgOpen(true);
+    }
+  }
 
   return (
     <div className="login">
@@ -43,13 +102,13 @@ function Login() {
         />
         <button
           className="login__btn"
-          onClick={() => logInWithEmailAndPassword(email, password)}
+          onClick={() => login()}
         >
           Login
         </button>
-        <button className="login__btn login__google" onClick={signInWithGoogle}>
+        {/* <button className="login__btn login__google" onClick={login}>
           Login with Google
-        </button>
+        </button> */}
         <div className="login__forgot-password">
           <Link to="/reset">Forgot Password</Link>
         </div>
@@ -57,6 +116,9 @@ function Login() {
           Don't have an account? <Link to="/register">Register</Link> now.
         </div>
       </div>
+
+      <ErrorDialog errorMsg={errMsg} open={errDlgOpen} onClose={handleClose} />
+      <MessageDialog msg={msg} open={msgDlgOpen} onClose={handleClose} />
     </div>
   );
 }

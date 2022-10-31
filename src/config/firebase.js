@@ -8,7 +8,6 @@ createUserWithEmailAndPassword,
 sendPasswordResetEmail,
 signOut } from "firebase/auth";
 import axios from "axios";
-import {getHostName} from '../api/apiClient';
 
 // chrome.exe --user-data-dir="C:/Chrome dev session" --disable-web-security
 

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -14,12 +13,10 @@ import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import TableViewIcon from '@mui/icons-material/TableView';
-import axios from 'axios';
 
-import "./Dashboard.css";
-import { getHostName } from '../../api/apiClient';
-import { auth } from "../../config/firebase";
 import ErrorDialog from '../ErrorDialog/ErrorDialog';
+import designService from '../../services/design.service';
+import "./Dashboard.css";
 
 const columns = [
   { id: 'id', label: 'ID', minWidth: 170 },
@@ -47,7 +44,6 @@ const columns = [
 ];
 
 function Dashboard() {
-  const [user, loading, error] = useAuthState(auth);
   const [focused, setFocused] = useState(false);
   const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
@@ -60,30 +56,18 @@ function Dashboard() {
   const labelOffset = -6;
 
   useEffect(() => {
-    if (loading) return;
-    // if (!user) return navigate("/");
-    
-    if (user) {
-      sessionStorage.setItem('token', user.accessToken);
+    console.log('Rendering');
       fetchDesigns();
-    }
-  }, [user, loading]);
+  }, []);
 
   const fetchDesigns = async () => {
     try {
-      const URL = `${getHostName()}/design?count=10&page=1`;
-      const authToken = sessionStorage.getItem('token');
-      if (authToken) {
-          const config = {
-              headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
-          };
-          const res = await axios.get(URL, config);
-          const {data} = res;
-  
-          if (data) {
-              setRows(data);
-          }
-      }
+        const res = await designService.listDesign();
+        const {data} = res;
+
+        if (data) {
+            setRows(data);
+        }
     } catch (err) {
       setErrMsg(err?.message);
       setErrDlgOpen(true);
@@ -114,19 +98,12 @@ function Dashboard() {
   const handleSearch = async () => {
     if (searchTerm) {
       try {
-        const URL = `${getHostName()}/design?q=${searchTerm}`;
-        const authToken = sessionStorage.getItem('token');
-        if (authToken) {
-            const config = {
-                headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
-            };
-            const res = await axios.get(URL, config);
-            const {data} = res;
-  
-            if (data) { 
-                console.log(data);
-            }
-        }
+          const res = await designService.listDesign();
+          const {data} = res;
+
+          if (data) { 
+              console.log(data);
+          }
       } catch (err) {
         setErrMsg(err?.message);
         setErrDlgOpen(true);
@@ -136,18 +113,11 @@ function Dashboard() {
 
   const handleDelete = async(row) => {
     try {
-      const URL = `${getHostName()}/design/${row.id}`;
-      const authToken = sessionStorage.getItem('token');
-      if (authToken) {
-          const config = {
-              headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
-          };
-          const res = await axios.delete(URL, config);
-          const {data} = res;
-  
-          if (data) { 
-              console.log(data);
-          }
+      const res = await designService.deleteDesign(row.id);
+      const {data} = res;
+
+      if (data) { 
+          console.log(data);
       }
     } catch (err) {
       setErrMsg(err?.message);
@@ -156,18 +126,16 @@ function Dashboard() {
   }
 
   const handleEdit = async (row) => {
-    const URL = `${getHostName()}/design/${row.id}`;
-    const authToken = sessionStorage.getItem('token');
-    if (authToken) {
-        const config = {
-            headers: { Authorization: `Bearer ${authToken}`,  'Content-Type': 'application/json' }
-        };
-        const res = await axios.get(URL, config);
-        const {data} = res;
+    try {
+      const res = await designService.getDesignByID(row.id);
+      const {data} = res;
 
-        if (data) { 
-            console.log(data);
-        }
+      if (data) { 
+          console.log(data);
+      }
+    } catch (err) {
+      setErrMsg(err?.message);
+      setErrDlgOpen(true);
     }
   }
 
