@@ -14,6 +14,7 @@ import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import TableViewIcon from '@mui/icons-material/TableView';
+import * as moment from 'moment'
 
 import ErrorDialog from '../ErrorDialog/ErrorDialog';
 import designService from '../../services/design.service';
@@ -214,13 +215,20 @@ function Dashboard() {
                               {/* <IconButton aria-label="view" key={row.id + 'view-btn' + columnIndex} >
                                 <TableViewIcon />
                               </IconButton> */}
-                            </TableCell> : <TableCell key={row.id + value + columnIndex} style={{width: column.width, padding: '.5rem'}}>
-                              <div style={{overflow: "hidden", textOverflow: "ellipsis"}}>
-                                <Typography noWrap>
-                                  {value}
-                                </Typography>
-                              </div>
-                          </TableCell>
+                                </TableCell> : ((column.label === 'CREATED AT' || column.label === 'UPDATED AT') ? <TableCell key={row.id + value + columnIndex} style={{width: column.width, padding: '.5rem'}}>
+                                  <div style={{overflow: "hidden", textOverflow: "ellipsis"}}>
+                                    <Typography noWrap>
+                                      {/* <Moment  format="D MMM YYYY, h:mm:ss A">{value}</Moment> */}
+                                      {moment(value).format('D MMM YYYY, h:mm:ss A')}
+                                    </Typography>
+                                  </div>
+                              </TableCell> : <TableCell key={row.id + value + columnIndex} style={{width: column.width, padding: '.5rem'}}>
+                                  <div style={{overflow: "hidden", textOverflow: "ellipsis"}}>
+                                    <Typography noWrap>
+                                      {value}
+                                    </Typography>
+                                  </div>
+                            </TableCell>)
                         )
                       })}
                     </TableRow>
