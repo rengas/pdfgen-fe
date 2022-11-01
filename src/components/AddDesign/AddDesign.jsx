@@ -19,6 +19,7 @@ function AddDesign () {
     const [msg, setMsg] = useState('');
     const [msgDlgOpen, setMsgDlgOpen] = useState(false);
     const [designID, setDesignID] = useState('');
+    const [pdfLink, setPdfLink] = useState('');
     const navigate = useNavigate();
     
     const onFocus = () => setFocused(true);
@@ -94,11 +95,39 @@ function AddDesign () {
                     const {data} = res;
             
                     if (data && 'id' in data) {
-                        console.log(data);
                         setDesignID(data.id);
+                        setMsg('Design saved successfully');
+                        setMsgDlgOpen(true);
+                        setTimeout(() => {
+                            setMsgDlgOpen(false);
+                        }, 2000);
                     }
                 }
             } else {
+                setErrDlgOpen(true);
+            }
+        } catch(err) {
+            setErrMsg(err?.message);
+            setErrDlgOpen(true);
+        }
+    }
+
+    const previewDownload = async () => {
+        try {
+            if (designID && jsonCode) {
+                const payload = {
+                    DesignId: designID,
+                    fields: JSON.parse(jsonCode),
+                };
+    
+                const response = await designService.generatePDF(payload);
+                const file = new Blob(
+                    [response.data], 
+                    {type: 'application/pdf'});
+                const fileURL = URL.createObjectURL(file);
+                setPdfLink(fileURL);
+            } else {
+                setErrMsg('Please create a design before generating PDF');
                 setErrDlgOpen(true);
             }
         } catch(err) {
@@ -115,12 +144,13 @@ function AddDesign () {
                     fields: JSON.parse(jsonCode),
                 };
     
-                const res = await designService.generatePDF(payload);
-                const {data} = res;
-        
-                if (data) {
-                    console.log(data);
-                }
+                const response = await designService.generatePDF(payload);
+                const temp = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = temp;
+                link.setAttribute('download', `${name}.pdf`); //or any other extension
+                document.body.appendChild(link);
+                link.click();
             } else {
                 setErrMsg('Please create a design before generating PDF');
                 setErrDlgOpen(true);
@@ -197,12 +227,15 @@ function AddDesign () {
                     />
                 </div>
                 <div className="add-design__action">
-                    <Button variant="contained" onClick={validatePDF}>Preview</Button>
+                    <Button variant="contained" onClick={validatePDF}>Validate</Button>
+                    <Button variant="contained" onClick={previewDownload}>Preview</Button>
                     <Button variant="contained" onClick={handleDownload}>Download pdf</Button>
                     <Button variant="contained" onClick={handleSave}>Save</Button>
                     <Button variant="contained" onClick={navigateToDashboard}>Designs</Button>
                 </div>
-                <div className="add-design__preview">&nbsp;</div>
+                <div className="add-design__preview">
+                    <object width="100%" height="100%" data={pdfLink} type="application/pdf"></object>
+                </div>
 
                 <ErrorDialog errorMsg={errMsg} open={errDlgOpen} onClose={handleClose} />
                 <MessageDialog msg={msg} open={msgDlgOpen} onClose={handleClose} />

@@ -7,6 +7,7 @@ import Register from "../Register/Register";
 import Reset from "../Reset/Reset";
 import Dashboard from "../Dashboard/Dashboard";
 import AddDesign from "../AddDesign/AddDesign";
+import EditDesign from "../EditDesign/EditDesign";
 import Profile from "../Profile/Profile";
 import authService from '../../services/auth.service';
 import { useApp } from '../../contexts/app.context';
@@ -61,6 +62,7 @@ function Shell() {
                         <Route exact path="/reset" element={<Reset />} />
                         <Route exact path="/dashboard" element={<Dashboard />} />
                         <Route exact path="/add-design" element={<AddDesign />} />
+                        <Route exact path="/edit-design/:id" element={<EditDesign />} />
                         <Route exact path="/profile" element={<Profile />} />
                     </Routes>
                 </div>

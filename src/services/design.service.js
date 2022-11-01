@@ -9,7 +9,10 @@ const createDesign = (payload) => {
 };
 
 const generatePDF = (payload) => {
-    return axios.post("/generate", payload);
+    const config = {
+      headers: { 'Content-Type': 'application/json'  }
+    };
+    return axios.post("/generate", payload, {responseType: 'blob', config});
 };
 
 const validateDesign = (payload) => {

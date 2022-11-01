@@ -1,0 +1,47 @@
+.add-design__wrapper {
+    height: calc(100vh - 5rem);
+    padding: 1rem;
+}
+
+.add-design {
+    display: flex;
+    align-items: stretch;
+    gap: 1.25rem;
+}
+
+.add-design__text {
+    margin-bottom: .75rem !important;
+}
+
+.add-design__editor {
+    flex: 0 0 25%;
+}
+
+.add-design__html {
+    flex: 0 0 25%;
+}
+
+.add-design__html--area,
+.add-design__editor--area {
+    height: calc(100vh - 8rem) !important;
+    overflow: overlay !important;
+    max-width: calc(((100vw - 7.25rem) / 4) - .9375rem);
+}
+
+.add-design__action {
+    flex: 0 0 calc(17.5% - 3.75rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.add-design__action button {
+    font-size: .75rem;
+}
+
+.add-design__preview {
+    flex: 0 0 32.5%;
+    background-color: #f5f5f5;
+    border-radius: .25rem;
+}

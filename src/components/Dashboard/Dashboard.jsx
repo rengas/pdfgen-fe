@@ -17,6 +17,7 @@ import TableViewIcon from '@mui/icons-material/TableView';
 import * as moment from 'moment'
 
 import ErrorDialog from '../ErrorDialog/ErrorDialog';
+import MessageDialog from '../MessageDialog/MessageDialog';
 import designService from '../../services/design.service';
 import "./Dashboard.css";
 
@@ -40,6 +41,8 @@ function Dashboard() {
   const navigate = useNavigate();
   const [errMsg, setErrMsg] = useState('');
   const [errDlgOpen, setErrDlgOpen] = useState(false);
+  const [msg, setMsg] = useState('');
+  const [msgDlgOpen, setMsgDlgOpen] = useState(false);
   const height = 40;
   const labelOffset = -6;
 
@@ -49,7 +52,7 @@ function Dashboard() {
 
   const fetchDesigns = async () => {
     try {
-      const queryStr = `count=${count}&page=${page + 1}`;
+      const queryStr = searchTerm ? `count=${count}&page=${page + 1}&search=${searchTerm}` : `count=${count}&page=${page + 1}`;
         const res = await designService.listDesign(queryStr);
         console.log(res);
         const {data} = res;
@@ -95,19 +98,12 @@ function Dashboard() {
     setSearchTerm(e.target.value);
   }
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
     if (searchTerm) {
-      try {
-          const res = await designService.listDesign();
-          const {data} = res;
-
-          if (data) { 
-              console.log(data);
-          }
-      } catch (err) {
-        setErrMsg(err?.message);
-        setErrDlgOpen(true);
-      }
+      setPage(() => {
+        fetchDesigns();
+        return 0;
+      });
     }
   }
 
@@ -118,6 +114,15 @@ function Dashboard() {
 
       if (data) { 
           console.log(data);
+          setPage(() => {
+            fetchDesigns();
+            return 0;
+          });
+          setMsg('Design deleted successfully');
+          setMsgDlgOpen(true);
+          setTimeout(() => {
+              setMsgDlgOpen(false);
+          }, 2000);
       }
     } catch (err) {
       setErrMsg(err?.message);
@@ -125,22 +130,32 @@ function Dashboard() {
     }
   }
 
-  const handleEdit = async (row) => {
-    try {
-      const res = await designService.getDesignByID(row.id);
-      const {data} = res;
-
-      if (data) { 
-          console.log(data);
-      }
-    } catch (err) {
-      setErrMsg(err?.message);
-      setErrDlgOpen(true);
-    }
+  const handleEdit = (row) => {
+    navigate(`/edit-design/${row.id}`);
   }
 
   const handleClose = () => {
     setErrDlgOpen(false);
+  }
+
+  const handleDownload = async (row) => {
+    try {
+        const payload = {
+            DesignId: row.id,
+            fields: row.fields,
+        };
+
+        const response = await designService.generatePDF(payload);
+        const temp = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = temp;
+        link.setAttribute('download', `${row.name}.pdf`); //or any other extension
+        document.body.appendChild(link);
+        link.click();
+    } catch(err) {
+        setErrMsg(err?.message);
+        setErrDlgOpen(true);
+    }
   }
 
   return (
@@ -222,15 +237,24 @@ function Dashboard() {
                                       {moment(value).format('D MMM YYYY, h:mm:ss A')}
                                     </Typography>
                                   </div>
-                              </TableCell> : <TableCell key={row.id + value + columnIndex} style={{width: column.width, padding: '.5rem'}}>
+                              </TableCell> : column.label === 'GENERATED PDF' ? <TableCell key={row.id + value + columnIndex} 
+                                style={{width: column.      width, padding: '.5rem'}}>
+                                  <div style={{overflow: "hidden", textOverflow: "ellipsis"}}>
+                                    <Typography noWrap>
+                                      <a href="javascript:void(0)" onClick={() => handleDownload(row)}>{`${value}.pdf`}</a>
+                                    </Typography>
+                                  </div>
+                              </TableCell>: <TableCell key={row.id + value + columnIndex} style={{width: column.width, padding: '.5rem'}}>
                                   <div style={{overflow: "hidden", textOverflow: "ellipsis"}}>
                                     <Typography noWrap>
                                       {value}
                                     </Typography>
                                   </div>
-                            </TableCell>)
-                        )
-                      })}
+                              </TableCell>
+                            )
+                          )
+                        }
+                      )}
                     </TableRow>
                   );
                 })}
@@ -249,6 +273,8 @@ function Dashboard() {
           />
         }
        </div>
+
+      <MessageDialog msg={msg} open={msgDlgOpen} onClose={handleClose} />
       <ErrorDialog errorMsg={errMsg} open={errDlgOpen} onClose={handleClose} />
      </div>
   );
