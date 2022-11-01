@@ -18,6 +18,7 @@ function AddDesign () {
     const [errDlgOpen, setErrDlgOpen] = useState(false);
     const [msg, setMsg] = useState('');
     const [msgDlgOpen, setMsgDlgOpen] = useState(false);
+    const [designID, setDesignID] = useState('');
     const navigate = useNavigate();
     
     const onFocus = () => setFocused(true);
@@ -61,9 +62,9 @@ function AddDesign () {
                     const res = await designService.validateDesign(payload);
                     const {data} = res;
             
-                    if (data) {
+                    if (data && 'id' in data) {
                         console.log(data);
-                        setMsg(data?.Message);
+                        setMsg(data?.id);
                         setMsgDlgOpen(true);
                     }
                 } catch (err) {
@@ -92,8 +93,9 @@ function AddDesign () {
                     const res = await designService.createDesign(payload);
                     const {data} = res;
             
-                    if (data) {
+                    if (data && 'id' in data) {
                         console.log(data);
+                        setDesignID(data.id);
                     }
                 }
             } else {
@@ -107,16 +109,21 @@ function AddDesign () {
 
     const handleDownload = async () => {
         try {
-            const payload = {
-                DesignId:"526f77ef-cbf0-4420-b0fc-1d0ba89fd8ee",
-                fields: JSON.parse(jsonCode),
-            };
-
-            const res = await designService.generatePDF(payload);
-            const {data} = res;
+            if (designID) {
+                const payload = {
+                    DesignId: designID,
+                    fields: JSON.parse(jsonCode),
+                };
     
-            if (data) {
-                console.log(data);
+                const res = await designService.generatePDF(payload);
+                const {data} = res;
+        
+                if (data) {
+                    console.log(data);
+                }
+            } else {
+                setErrMsg('Please create a design before generating PDF');
+                setErrDlgOpen(true);
             }
         } catch(err) {
             setErrMsg(err?.message);

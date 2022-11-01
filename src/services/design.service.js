@@ -9,11 +9,11 @@ const createDesign = (payload) => {
 };
 
 const generatePDF = (payload) => {
-    return axios.post("/design/generate", payload);
+    return axios.post("/generate", payload);
 };
 
 const validateDesign = (payload) => {
-    return axios.post("/design/validate", payload);
+    return axios.post("/validate", payload);
 };
 
 const deleteDesign = (id) => {
