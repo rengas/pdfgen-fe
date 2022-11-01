@@ -1,7 +1,7 @@
 import axios from '../api/apiClient';
 
-const listDesign = () => {
-  return axios.get("/design");
+const listDesign = (queryStr) => {
+  return axios.get(queryStr ? `/design?${queryStr}` : `/design`);
 };
 
 const createDesign = (payload) => {

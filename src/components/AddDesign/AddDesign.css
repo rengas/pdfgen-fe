@@ -1,9 +1,16 @@
-.add-design {
+.add-design__wrapper {
     height: calc(100vh - 5rem);
     padding: 1rem;
+}
+
+.add-design {
     display: flex;
     align-items: stretch;
     gap: 1.25rem;
+}
+
+.add-design__text {
+    margin-bottom: .75rem !important;
 }
 
 .add-design__editor {
@@ -16,7 +23,7 @@
 
 .add-design__html--area,
 .add-design__editor--area {
-    height: calc(100vh - 5rem) !important;
+    height: calc(100vh - 8rem) !important;
     overflow: overlay !important;
     max-width: calc(((100vw - 7.25rem) / 4) - .9375rem);
 }

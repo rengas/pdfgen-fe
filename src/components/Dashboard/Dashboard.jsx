@@ -9,6 +9,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import { Typography } from '@mui/material';
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -19,28 +20,12 @@ import designService from '../../services/design.service';
 import "./Dashboard.css";
 
 const columns = [
-  { id: 'id', label: 'ID', minWidth: 170 },
-  { id: 'name', label: 'NAME', minWidth: 100 },
-  {
-    id: 'createdAt',
-    label: 'CREATED AT',
-    minWidth: 170,
-  },
-  {
-    id: 'updatedAt',
-    label: 'UPDATED AT',
-    minWidth: 150,
-  },
-  {
-    id: 'name',
-    label: 'GENERATED PDF',
-    minWidth: 150
-  },
-  {
-    id: 'action',
-    label: 'ACTION',
-    minWidth: 120
-  },
+  { id: 'id', label: 'ID', width: '100px'},
+  { id: 'name', label: 'NAME', width: '100px'},
+  { id: 'createdAt',label: 'CREATED AT', width: '100px'},
+  { id: 'updatedAt',label: 'UPDATED AT', width: '100px'},
+  { id: 'name',label: 'GENERATED PDF', width: '100px'},
+  { id: 'action', label: 'ACTION', width: '100px'},
 ];
 
 function Dashboard() {
@@ -49,6 +34,8 @@ function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState([]);
+  const [count, setCouunt] = useState(10);
+  const [totalCount, setTotalCount] = useState(0);
   const navigate = useNavigate();
   const [errMsg, setErrMsg] = useState('');
   const [errDlgOpen, setErrDlgOpen] = useState(false);
@@ -56,17 +43,28 @@ function Dashboard() {
   const labelOffset = -6;
 
   useEffect(() => {
-    console.log('Rendering');
       fetchDesigns();
-  }, []);
+  }, [page]);
 
   const fetchDesigns = async () => {
     try {
-        const res = await designService.listDesign();
+      const queryStr = `count=${count}&page=${page + 1}`;
+        const res = await designService.listDesign(queryStr);
+        console.log(res);
         const {data} = res;
 
         if (data) {
-            setRows(data);
+          const {designs, pagination} = data;
+          if (page === 0) {
+            setRows(designs);
+          } else {
+            setRows((prev) => [...prev, ...designs]);
+          }
+
+          if (pagination && 'Total' in pagination) {
+            console.log(pagination.Total)
+            setTotalCount(pagination.Total);
+          }
         }
     } catch (err) {
       setErrMsg(err?.message);
@@ -78,6 +76,7 @@ function Dashboard() {
   const onBlur = () => setFocused(false);
 
   const handleChangePage = (event, newPage) => {
+    console.log(newPage);
     setPage(newPage);
   };
 
@@ -172,68 +171,76 @@ function Dashboard() {
         <Button variant="contained" onClick={handleSearch}>Search</Button>
        </div>
 
-       <TableContainer sx={{ maxHeight: 'calc(100vh - 11.375rem)' }}>
-        <Table stickyHeader aria-label="Design Table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column, columnHeadIndex) => (
-                <TableCell
-                  key={column.id + column.label + columnHeadIndex}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth, backgroundColor: '#F3F4F6', color: '#6B7280', fontWeight: 600, padding: '.5rem' }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, index) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id + index}>
-                    {columns.map((column, columnIndex) => {
-                      const value = row[column.id];
-                      return (
-                        column.label === 'ACTION' ? <TableCell key={row.id + value + columnIndex} style={{
-                          display: 'flex',
-                          gap: '.5rem',
-                          padding: '.5rem'
-                        }}>
-                            <IconButton aria-label="delete" key={row.id + 'delete-btn' + columnIndex} 
-                              onClick={() => handleDelete(row)}>
-                              <DeleteIcon fontSize="small" />
-                            </IconButton>
+       <div className="dashboard__table--wrapper">
+        <TableContainer sx={{ maxHeight: 'calc(100vh - 11.375rem)', width: 'calc(100vw - 7.25rem)'}}>
+          <Table stickyHeader aria-label="Design Table" sx={{tableLayout: 'fixed'}}>
+            <TableHead>
+              <TableRow>
+                {columns.map((column, columnHeadIndex) => (
+                  <TableCell
+                    key={column.id + column.label + columnHeadIndex}
+                    align={column.align}
+                    style={{ width: column.width, backgroundColor: '#F3F4F6', color: '#6B7280', fontWeight: 600, padding: '.5rem' }}
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  return (
+                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id + index}>
+                      {columns.map((column, columnIndex) => {
+                        const value = row[column.id];
+                        return (
+                          column.label === 'ACTION' ? <TableCell key={row.id + value + columnIndex} style={{
+                            display: 'flex',
+                            gap: '.5rem',
+                            padding: '.5rem'
+                          }}>
+                              <IconButton aria-label="delete" key={row.id + 'delete-btn' + columnIndex} 
+                                onClick={() => handleDelete(row)}>
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
 
-                            <IconButton aria-label="edit"  key={row.id + 'edit-btn' + columnIndex} 
-                              onClick={() => handleEdit(row)}>
-                              <EditIcon fontSize="small" />
-                            </IconButton>
+                              <IconButton aria-label="edit"  key={row.id + 'edit-btn' + columnIndex} 
+                                onClick={() => handleEdit(row)}>
+                                <EditIcon fontSize="small" />
+                              </IconButton>
 
-                            {/* <IconButton aria-label="view">
-                              <TableViewIcon />
-                            </IconButton> */}
-                          </TableCell> : <TableCell key={row.id + value + columnIndex} style={{padding: '.5rem'}}>
-                          {value}
-                        </TableCell>
-                      )
-                    })}
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+                              {/* <IconButton aria-label="view" key={row.id + 'view-btn' + columnIndex} >
+                                <TableViewIcon />
+                              </IconButton> */}
+                            </TableCell> : <TableCell key={row.id + value + columnIndex} style={{width: column.width, padding: '.5rem'}}>
+                              <div style={{overflow: "hidden", textOverflow: "ellipsis"}}>
+                                <Typography noWrap>
+                                  {value}
+                                </Typography>
+                              </div>
+                          </TableCell>
+                        )
+                      })}
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        {
+          rows && rows.length > 0 && <TablePagination sx={{width: 'calc(100vw - 9.25rem)'}}
+            rowsPerPageOptions={[10, 25, 100]}
+            component="div"
+            count={totalCount}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        }
+       </div>
       <ErrorDialog errorMsg={errMsg} open={errDlgOpen} onClose={handleClose} />
      </div>
   );

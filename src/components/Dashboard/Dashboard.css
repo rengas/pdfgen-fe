@@ -17,3 +17,14 @@
 .dashboard__search--text {
     width: 30rem;
 }
+
+.dashboard__table--wrapper {
+    width: calc(100vw - 7.25rem);
+    overflow-x: auto;
+}
+
+.dashboard__table--cell {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

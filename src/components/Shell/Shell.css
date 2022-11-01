@@ -1,3 +1,4 @@
 .app__shell.logged__in {
     width: calc(100vw - 7.25rem);
+    overflow-x: auto;
 }

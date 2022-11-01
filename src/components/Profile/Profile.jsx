@@ -17,7 +17,12 @@ function Profile() {
 
         if (data) {
             setProfile(data.email);
+            setApiKey(data.id);
         }
+    }
+
+    const handleGenerate = () => {
+
     }
 
     return (
