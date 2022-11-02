@@ -37,7 +37,6 @@ function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState([]);
-  const [count, setCouunt] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   const {appState} = useApp();
   const navigate = useNavigate();
@@ -54,9 +53,13 @@ function Dashboard() {
       fetchDesigns();
   }, [page]);
 
+  useEffect(() => {
+    fetchDesigns();
+  }, [rowsPerPage]);
+
   const fetchDesigns = async () => {
     try {
-      const queryStr = searchTerm ? `count=${count}&page=${page + 1}&search=${searchTerm}` : `count=${count}&page=${page + 1}`;
+      const queryStr = searchTerm ? `count=${rowsPerPage}&page=${page + 1}&search=${searchTerm}` : `count=${rowsPerPage}&page=${page + 1}`;
         const res = await designService.listDesign(queryStr);
         console.log(res);
         const {data} = res;
@@ -89,8 +92,11 @@ function Dashboard() {
   };
 
   const handleChangeRowsPerPage = (event) => {
+    console.log(event);
     setRowsPerPage(+event.target.value);
-    setPage(0);
+    setPage(() => {
+      return 0;
+    });
   };
 
   const navigateToAddDesign = () => {
