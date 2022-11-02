@@ -1,4 +1,21 @@
 .app__shell.logged__in {
-    width: calc(100vw - 7.25rem);
+    width: calc(100vw - 12.5rem);
     overflow-x: auto;
+}
+
+.app__shell.full-width {
+    width: 100vw;
+}
+
+.app__menu {
+    display: flex;
+    align-items: center;
+    color: #0EA5E9 !important;
+}
+
+.app__logout {
+    background-color: #0EA5E9 !important;
+	color: #fff !important;
+    padding: .5rem .75rem;
+    border-radius: .25rem;
 }

@@ -19,6 +19,7 @@ import * as moment from 'moment'
 import ErrorDialog from '../ErrorDialog/ErrorDialog';
 import MessageDialog from '../MessageDialog/MessageDialog';
 import designService from '../../services/design.service';
+import { useApp } from '../../contexts/app.context';
 import "./Dashboard.css";
 
 const columns = [
@@ -38,6 +39,7 @@ function Dashboard() {
   const [rows, setRows] = useState([]);
   const [count, setCouunt] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
+  const {appState} = useApp();
   const navigate = useNavigate();
   const [errMsg, setErrMsg] = useState('');
   const [errDlgOpen, setErrDlgOpen] = useState(false);
@@ -45,6 +47,8 @@ function Dashboard() {
   const [msgDlgOpen, setMsgDlgOpen] = useState(false);
   const height = 40;
   const labelOffset = -6;
+
+  console.log(appState);
 
   useEffect(() => {
       fetchDesigns();
@@ -161,7 +165,7 @@ function Dashboard() {
   return (
     <div className="dashboard">
        <div className="dashboard__header">
-        <Button variant="contained" onClick={navigateToAddDesign}>Add Design</Button>
+        <Button variant="contained" className="custom-btn" onClick={navigateToAddDesign}>Add Design</Button>
         <TextField id="search" className="dashboard__search--text" label="Search" variant="outlined" onFocus={onFocus} onBlur={onBlur}
           value={searchTerm}
           onChange={handleSearchTermChange}
@@ -184,11 +188,11 @@ function Dashboard() {
               },
           }}
         />
-        <Button variant="contained" onClick={handleSearch}>Search</Button>
+        <Button variant="contained" className="custom-btn" onClick={handleSearch}>Search</Button>
        </div>
 
-       <div className="dashboard__table--wrapper">
-        <TableContainer sx={{ maxHeight: 'calc(100vh - 11.375rem)', width: 'calc(100vw - 7.25rem)'}}>
+       <div className={appState.sidebar ? 'dashboard__table--wrapper' : 'dashboard__table--wrapper full-width'}>
+        <TableContainer sx={{ maxHeight: 'calc(100vh - 11.375rem)', width: appState.sidebar ? 'calc(100vw - 12.5rem)' : '100vw'}}>
           <Table stickyHeader aria-label="Design Table" sx={{tableLayout: 'fixed'}}>
             <TableHead>
               <TableRow>
@@ -214,16 +218,16 @@ function Dashboard() {
                         return (
                           column.label === 'ACTION' ? <TableCell key={row.id + value + columnIndex} style={{
                             display: 'flex',
-                            gap: '.5rem',
+                            gap: '1rem',
                             padding: '.5rem'
                           }}>
                               <IconButton aria-label="delete" key={row.id + 'delete-btn' + columnIndex} 
-                                onClick={() => handleDelete(row)}>
+                                onClick={() => handleDelete(row)} className="custom-btn" size="small">
                                 <DeleteIcon fontSize="small" />
                               </IconButton>
 
                               <IconButton aria-label="edit"  key={row.id + 'edit-btn' + columnIndex} 
-                                onClick={() => handleEdit(row)}>
+                                onClick={() => handleEdit(row)} className="custom-btn" size="small">
                                 <EditIcon fontSize="small" />
                               </IconButton>
 
@@ -238,10 +242,10 @@ function Dashboard() {
                                     </Typography>
                                   </div>
                               </TableCell> : column.label === 'GENERATED PDF' ? <TableCell key={row.id + value + columnIndex} 
-                                style={{width: column.      width, padding: '.5rem'}}>
+                                style={{width: column.width, padding: '.5rem'}}>
                                   <div style={{overflow: "hidden", textOverflow: "ellipsis"}}>
                                     <Typography noWrap>
-                                      <a href="javascript:void(0)" onClick={() => handleDownload(row)}>{`${value}.pdf`}</a>
+                                      <a href="javascript:void(0)" className="download-pdf" onClick={() => handleDownload(row)}>{`${value}.pdf`}</a>
                                     </Typography>
                                   </div>
                               </TableCell>: <TableCell key={row.id + value + columnIndex} style={{width: column.width, padding: '.5rem'}}>
@@ -262,7 +266,7 @@ function Dashboard() {
           </Table>
         </TableContainer>
         {
-          rows && rows.length > 0 && <TablePagination sx={{width: 'calc(100vw - 9.25rem)'}}
+          rows && rows.length > 0 && <TablePagination sx={{width: appState.sidebar ? 'calc(100vw - 15rem)' : 'calc(100vw - 2rem)'}}
             rowsPerPageOptions={[10, 25, 100]}
             component="div"
             count={totalCount}

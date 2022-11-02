@@ -30,6 +30,14 @@ article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;
 }
+html {
+	box-sizing: border-box;
+}
+
+*, *:before, *:after {
+	box-sizing: inherit;
+}
+
 body {
 	line-height: 1;
 }
@@ -80,8 +88,11 @@ body {
 
 .app__header {
 	display: flex;
-	justify-content: flex-end;
+	justify-content: space-between;
+	align-items: center;
 	padding: 1rem;
+	border-bottom: 1px solid whitesmoke;
+	height: 3rem;
 }
 
 .app__logout {
@@ -129,5 +140,40 @@ body {
 .sidebar {
 	background: #111827;
 	padding: 1.5rem 1rem;
-	width: 7.25rem;
+	width: 12.5rem;
+	display: block;
+}
+
+.sidebar.hidden {
+	display: none;
+}
+
+.custom-btn {
+	background-color: #0EA5E9 !important;
+	color: #fff !important;
+}
+
+.custom-btn svg {
+	font-size: 1rem;
+}
+
+.download-pdf {
+	font-family: "Inter";
+	color: #0EA5E9;
+	text-decoration: none;
+	font-weight: 500;
+}
+
+td p {
+	font-size: .875rem !important;
+}
+
+[data-color-mode*="dark"],
+[data-color-mode*="dark"] body {
+  --color-canvas-subtle: #161b22;
+}
+
+[data-color-mode*="light"],
+[data-color-mode*="light"] body {
+  --color-canvas-subtle: #f6f8fa;
 }

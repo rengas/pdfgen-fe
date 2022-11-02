@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useLayoutEffect } from 'react'
+import MenuIcon from '@mui/icons-material/Menu';
 
 import Login  from '../Login/Login';
 import Register from "../Register/Register";
@@ -15,12 +16,17 @@ import "./Shell.css";
 
 function Shell() {
     const [user, setUser] = useState(null);
-    const {appState} = useApp();
+    const [displaySidebar, setDisplaySidebar] = useState(true);
+    const {appState, dispatch} = useApp();
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchUser();
     }, [appState.profileStatus]);
+
+    useLayoutEffect(() => {
+        dispatch({type: 'TOGGLE_SIDEBAR_STATUS', payload: displaySidebar});
+    }, [displaySidebar]);
 
     const fetchUser = () => {
         const user = authService.getCurrentUser();
@@ -33,10 +39,16 @@ function Shell() {
         fetchUser();
     }
 
+    const handleMenuToggle = () => {
+        setDisplaySidebar(prev => {
+            return !prev;
+        });
+    }
+
     return (
         <>
             {
-                user && <div className="sidebar">
+                user && <div className={appState.sidebar ? 'sidebar' : 'sidebar hidden'}>
                     <div className="app__logo">
                         <img src="public/logo.svg" alt="Logo Image" />
                     </div>
@@ -49,9 +61,12 @@ function Shell() {
                 </div>
             }
 
-            <div className={`app__shell ${user ? 'logged__in' : 'logged__out'}`}>
+            <div className={`app__shell ${user ? (appState.sidebar ? 'logged__in' : 'logged__in full-width') : 'logged__out'}`}>
                 {
                     user && <div className="app__header">
+                        <a href="javascript:void(0)" className="app__menu" onClick={() => handleMenuToggle()}>
+                            <MenuIcon />
+                        </a>
                         <a href="javascript:void(0)" className="app__logout" onClick={() => handleLogout()}>Logout</a>
                     </div>
                 }

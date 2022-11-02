@@ -19,8 +19,12 @@
 }
 
 .dashboard__table--wrapper {
-    width: calc(100vw - 7.25rem);
+    width: calc(100vw - 12.5rem);
     overflow-x: auto;
+}
+
+.dashboard__table--wrapper.full-width {
+    width: 100vw;
 }
 
 .dashboard__table--cell {

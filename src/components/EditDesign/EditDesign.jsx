@@ -7,6 +7,7 @@ import ErrorDialog from '../ErrorDialog/ErrorDialog';
 import MessageDialog from '../MessageDialog/MessageDialog';
 import designService from '../../services/design.service';
 import authService from '../../services/auth.service';
+import { useApp } from '../../contexts/app.context';
 import "./EditDesign.css";
 
 function EditDesign () {
@@ -21,10 +22,10 @@ function EditDesign () {
     const [designID, setDesignID] = useState('');
     const {id} = useParams();
     const [pdfLink, setPdfLink] = useState('');
+    const {appState} = useApp();
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log(id);
         fetchDesignByID();
     }, [id]);
 
@@ -218,24 +219,23 @@ function EditDesign () {
             />
 
             <div className="add-design">
-                <div className="add-design__editor">
+                <div className={appState.sidebar ? 'add-design__editor' : 'add-design__editor full-width'}>
                     <CodeEditor
                         className="add-design__editor--area"
                         value={code}
                         language="js"
-                        placeholder="Please enter golang template"
+                        placeholder="Please enter HTML template"
                         onChange={(evn) => setCode(evn.target.value)}
                         padding={15}
                         style={{
                             fontSize: 12,
-                            backgroundColor: "#f5f5f5",
                             fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
                             height: '100%',
                             borderRadius: 4
                         }}
                     />
                 </div>
-                <div className="add-design__html">
+                <div className={appState.sidebar ? 'add-design__html' : 'add-design__html full-width'}>
                     <CodeEditor
                         className="add-design__html--area"
                         value={jsonCode}
@@ -245,7 +245,6 @@ function EditDesign () {
                         padding={15}
                         style={{
                             fontSize: 12,
-                            backgroundColor: "#f5f5f5",
                             fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
                             height: '100%',
                             borderRadius: 4
@@ -253,13 +252,13 @@ function EditDesign () {
                     />
                 </div>
                 <div className="add-design__action">
-                    <Button variant="contained" onClick={validatePDF}>Validate</Button>
-                    <Button variant="contained" onClick={previewDownload}>Preview</Button>
-                    <Button variant="contained" onClick={handleDownload}>Download pdf</Button>
-                    <Button variant="contained" onClick={handleSave}>Update</Button>
-                    <Button variant="contained" onClick={navigateToDashboard}>Designs</Button>
+                    <Button variant="contained" className="custom-btn"  onClick={validatePDF}>Validate</Button>
+                    <Button variant="contained" className="custom-btn"  onClick={previewDownload}>Preview</Button>
+                    <Button variant="contained" className="custom-btn"  onClick={handleDownload}>Download pdf</Button>
+                    <Button variant="contained" className="custom-btn" onClick={handleSave}>Update</Button>
+                    <Button variant="contained" className="custom-btn"  onClick={navigateToDashboard}>Designs</Button>
                 </div>
-                <div className="add-design__preview">
+                <div className={appState.sidebar ? 'add-design__preview' : 'add-design__preview full-width'}>
                     <object width="100%" height="100%" data={pdfLink} type="application/pdf"></object>
                 </div>
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CodeEditor from '@uiw/react-textarea-code-editor';
+import CodeEditor, { SelectionText } from '@uiw/react-textarea-code-editor';
 import {TextField, Button} from '@mui/material';
 import { useNavigate } from "react-router-dom";
 
@@ -7,20 +7,39 @@ import ErrorDialog from '../ErrorDialog/ErrorDialog';
 import MessageDialog from '../MessageDialog/MessageDialog';
 import designService from '../../services/design.service';
 import authService from '../../services/auth.service';
+import { useApp } from '../../contexts/app.context';
 import "./AddDesign.css";
 
 function AddDesign () {
     const [focused, setFocused] = useState(false);
-    const [code, setCode] = useState(``);
+    const [code, setCode] = useState(`<!doctype html>
+<html lang=en>
+    <head>
+        <meta charset=utf-8>
+        <title>Sample HTML</title>
+    </head>
+    <body>
+        <h1>{{ .title }}</h1>
+    </body>
+</html>`);
     const [name, setName] = useState(``);
-    const [jsonCode, setJsonCode] = useState(``);
+    const [jsonCode, setJsonCode] = useState(`{"title": "Hello World"}`);
     const [errMsg, setErrMsg] = useState('');
     const [errDlgOpen, setErrDlgOpen] = useState(false);
     const [msg, setMsg] = useState('');
     const [msgDlgOpen, setMsgDlgOpen] = useState(false);
     const [designID, setDesignID] = useState('');
-    const [pdfLink, setPdfLink] = useState('');
+    const [pdfLink, setPdfLink] = useState('http://www.xmlpdf.com/manualfiles/hello-world.pdf');
+    const codeEditorRef = React.useRef();
+    const {appState} = useApp();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (codeEditorRef.current) {
+          const obj = new SelectionText(codeEditorRef.current);
+          console.log("obj:", obj);
+        }
+      }, []);
     
     const onFocus = () => setFocused(true);
     const onBlur = () => setFocused(false);
@@ -192,24 +211,23 @@ function AddDesign () {
             />
 
             <div className="add-design">
-                <div className="add-design__editor">
+                <div data-color-mode="dark" className={appState.sidebar ? 'add-design__editor' : 'add-design__editor full-width'}>
                     <CodeEditor
                         className="add-design__editor--area"
                         value={code}
-                        language="js"
-                        placeholder="Please enter golang template"
+                        ref={codeEditorRef}
+                        language="html"
+                        placeholder="Please enter HTML template"
                         onChange={(evn) => setCode(evn.target.value)}
                         padding={15}
                         style={{
                             fontSize: 12,
-                            backgroundColor: "#f5f5f5",
                             fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
-                            height: '100%',
                             borderRadius: 4
                         }}
                     />
                 </div>
-                <div className="add-design__html">
+                <div className={appState.sidebar ? 'add-design__html' : 'add-design__html full-width'}>
                     <CodeEditor
                         className="add-design__html--area"
                         value={jsonCode}
@@ -219,21 +237,19 @@ function AddDesign () {
                         padding={15}
                         style={{
                             fontSize: 12,
-                            backgroundColor: "#f5f5f5",
                             fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
-                            height: '100%',
                             borderRadius: 4
                         }}
                     />
                 </div>
                 <div className="add-design__action">
-                    <Button variant="contained" onClick={validatePDF}>Validate</Button>
-                    <Button variant="contained" onClick={previewDownload}>Preview</Button>
-                    <Button variant="contained" onClick={handleDownload}>Download pdf</Button>
-                    <Button variant="contained" onClick={handleSave}>Save</Button>
-                    <Button variant="contained" onClick={navigateToDashboard}>Designs</Button>
+                    <Button className="custom-btn" variant="contained" onClick={validatePDF}>Validate</Button>
+                    <Button className="custom-btn" variant="contained" onClick={previewDownload}>Preview</Button>
+                    <Button className="custom-btn" variant="contained" onClick={handleDownload}>Download pdf</Button>
+                    <Button className="custom-btn" variant="contained" onClick={handleSave}>Save</Button>
+                    <Button className="custom-btn" variant="contained" onClick={navigateToDashboard}>Designs</Button>
                 </div>
-                <div className="add-design__preview">
+                <div className={appState.sidebar ? 'add-design__preview' : 'add-design__preview full-width'}>
                     <object width="100%" height="100%" data={pdfLink} type="application/pdf"></object>
                 </div>
 

@@ -53,7 +53,8 @@ function Register() {
           setErrDlgOpen(true);
       }
     } catch (err) {
-        setErrMsg(err?.message);
+      console.log(err);
+        setErrMsg(err?.response?.data?.Error);
         setErrDlgOpen(true);
     }
   };
@@ -66,6 +67,8 @@ function Register() {
   return (
     <div className="register">
       <div className="register__container">
+        <img src="public/logo.svg" alt="" className="register__logo" />
+        <h1 className="register__header">Register</h1>
         <input
           type="text"
           className="register__textBox"

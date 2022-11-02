@@ -25,7 +25,12 @@
 .add-design__editor--area {
     height: calc(100vh - 8rem) !important;
     overflow: overlay !important;
-    max-width: calc(((100vw - 7.25rem) / 4) - .9375rem);
+    max-width: calc(((100vw - 12.5rem) / 4) - .9375rem);
+}
+
+.full-width .add-design__html--area,
+.full-width .add-design__editor--area {
+    max-width: calc((100vw) / 4);
 }
 
 .add-design__action {
