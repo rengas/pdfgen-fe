@@ -39,7 +39,6 @@ function Register() {
           const {data} = res;
 
           if (data) {
-              console.log(data);
               setMsg(data?.Message);
               setMsgDlgOpen(true);
               navigate('/');
@@ -53,7 +52,6 @@ function Register() {
           setErrDlgOpen(true);
       }
     } catch (err) {
-      console.log(err);
         setErrMsg(err?.response?.data?.Error);
         setErrDlgOpen(true);
     }

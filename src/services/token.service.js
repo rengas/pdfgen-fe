@@ -19,7 +19,6 @@ const getLocalRefreshToken = () => {
   };
   
   const setUser = (user) => {
-    console.log(JSON.stringify(user));
     sessionStorage.setItem("user", JSON.stringify(user));
   };
   

@@ -59,7 +59,6 @@ function Login() {
           const {data} = res;
 
           if (data) {
-            console.log(data);
             setMsg(data?.Message);
             setMsgDlgOpen(true);
             dispatch({type: 'TOGGLE_PROFILE_STATUS'})

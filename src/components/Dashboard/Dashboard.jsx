@@ -14,7 +14,7 @@ import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import TableViewIcon from '@mui/icons-material/TableView';
-import * as moment from 'moment'
+import moment from 'moment';
 
 import ErrorDialog from '../ErrorDialog/ErrorDialog';
 import MessageDialog from '../MessageDialog/MessageDialog';
@@ -47,8 +47,6 @@ function Dashboard() {
   const height = 40;
   const labelOffset = -6;
 
-  console.log(appState);
-
   useEffect(() => {
       fetchDesigns();
   }, [page]);
@@ -61,7 +59,6 @@ function Dashboard() {
     try {
       const queryStr = searchTerm ? `count=${rowsPerPage}&page=${page + 1}&search=${searchTerm}` : `count=${rowsPerPage}&page=${page + 1}`;
         const res = await designService.listDesign(queryStr);
-        console.log(res);
         const {data} = res;
 
         if (data) {
@@ -73,7 +70,6 @@ function Dashboard() {
           }
 
           if (pagination && 'Total' in pagination) {
-            console.log(pagination.Total)
             setTotalCount(pagination.Total);
           }
         }
@@ -87,12 +83,10 @@ function Dashboard() {
   const onBlur = () => setFocused(false);
 
   const handleChangePage = (event, newPage) => {
-    console.log(newPage);
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
-    console.log(event);
     setRowsPerPage(+event.target.value);
     setPage(() => {
       return 0;
@@ -104,7 +98,6 @@ function Dashboard() {
   }
 
   const handleSearchTermChange = (e) => {
-    console.log(e.target.value);
     setSearchTerm(e.target.value);
   }
 
@@ -122,17 +115,16 @@ function Dashboard() {
       const res = await designService.deleteDesign(row.id);
       const {data} = res;
 
-      if (data) { 
-          console.log(data);
-          setPage(() => {
-            fetchDesigns();
-            return 0;
-          });
-          setMsg('Design deleted successfully');
-          setMsgDlgOpen(true);
-          setTimeout(() => {
-              setMsgDlgOpen(false);
-          }, 2000);
+      if (data) {
+        setPage(() => {
+          fetchDesigns();
+          return 0;
+        });
+        setMsg('Design deleted successfully');
+        setMsgDlgOpen(true);
+        setTimeout(() => {
+            setMsgDlgOpen(false);
+        }, 2000);
       }
     } catch (err) {
       setErrMsg(err?.message);

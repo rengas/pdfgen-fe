@@ -38,7 +38,6 @@ function EditDesign () {
             const res = await designService.getDesignByID(id);
             if (res) {
                 const {data} = res;
-                console.log(data);
                 if (data) {
                     setCode('design' in data && data.design ? data.design : '');
                     setJsonCode('fields' in data && data.fields ? JSON.stringify(data.fields) : '');
@@ -93,7 +92,6 @@ function EditDesign () {
                     const {data} = res;
             
                     if (data && 'id' in data) {
-                        console.log(data);
                         setMsg(data?.id);
                         setMsgDlgOpen(true);
                     }
@@ -124,7 +122,6 @@ function EditDesign () {
                     const {data} = res;
             
                     if (data && 'id' in data) {
-                        console.log(data);
                         setDesignID(data.id);
                         setMsg('Design updated successfully');
                         setMsgDlgOpen(true);

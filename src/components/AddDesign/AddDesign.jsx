@@ -37,7 +37,6 @@ function AddDesign () {
     useEffect(() => {
         if (codeEditorRef.current) {
           const obj = new SelectionText(codeEditorRef.current);
-          console.log("obj:", obj);
         }
       }, []);
     
@@ -83,7 +82,6 @@ function AddDesign () {
                     const {data} = res;
             
                     if (data && 'id' in data) {
-                        console.log(data);
                         setMsg(data?.id);
                         setMsgDlgOpen(true);
                     }
