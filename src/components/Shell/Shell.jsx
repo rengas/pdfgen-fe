@@ -50,7 +50,7 @@ function Shell() {
             {
                 user && <div className={appState.sidebar ? 'sidebar' : 'sidebar hidden'}>
                     <div className="app__logo">
-                        <img src="public/logo.svg" alt="Logo Image" />
+                        <img src="logo.svg" alt="Logo Image" />
                     </div>
 
                     <div className="app__menus">

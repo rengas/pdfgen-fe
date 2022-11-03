@@ -1,4 +1,4 @@
-import { BrowserRouter as Router } from "react-router-dom";
+import { HashRouter as Router } from "react-router-dom";
 
 import Shell from './components/Shell/Shell';
 import { AppProvider } from './contexts/app.context';

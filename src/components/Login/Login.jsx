@@ -81,7 +81,7 @@ function Login() {
   return (
     <div className="login">
       <div className="login__container">
-        <img src="public/logo.svg" alt="" className="login__logo" />
+        <img src="logo.svg" alt="" className="login__logo" />
         <h1 className="login__header">Sign In</h1>
         <input
           id="emailID"

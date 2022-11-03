@@ -67,7 +67,7 @@ function Register() {
   return (
     <div className="register">
       <div className="register__container">
-        <img src="public/logo.svg" alt="" className="register__logo" />
+        <img src="logo.svg" alt="" className="register__logo" />
         <h1 className="register__header">Register</h1>
         <input
           type="text"
