@@ -229,7 +229,7 @@ function EditDesign () {
 
             <div className="add-design">
                 <div className={appState.sidebar ? 'add-design__editor' : 'add-design__editor full-width'}>
-                    <span className="add-design__header">HTML Template</span>
+                    <span className="add-design__header">Supports HTML, CSS2, Golang template</span>
                     <CodeEditor
                         className="add-design__editor--area"
                         value={code}
