@@ -251,9 +251,8 @@ function EditDesign () {
                 <div className="add-design__action">
                     <Button variant="contained" className="custom-btn"  onClick={validatePDF}>Validate</Button>
                     <Button variant="contained" className="custom-btn"  onClick={previewDownload}>Preview</Button>
-                    <Button variant="contained" className="custom-btn"  onClick={handleDownload}>Download pdf</Button>
                     <Button variant="contained" className="custom-btn" onClick={handleSave}>Update</Button>
-                    <Button variant="contained" className="custom-btn"  onClick={navigateToDashboard}>Designs</Button>
+                    <Button variant="contained" className="custom-btn"  onClick={handleDownload}>Download pdf</Button>
                 </div>
                 <div className={appState.sidebar ? 'add-design__preview' : 'add-design__preview full-width'}>
                     <object width="100%" height="100%" data={pdfLink} type="application/pdf"></object>

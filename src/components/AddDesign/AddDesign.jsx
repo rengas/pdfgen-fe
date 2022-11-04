@@ -243,9 +243,8 @@ function AddDesign () {
                 <div className="add-design__action">
                     <Button className="custom-btn" variant="contained" onClick={validatePDF}>Validate</Button>
                     <Button className="custom-btn" variant="contained" onClick={previewDownload}>Preview</Button>
-                    <Button className="custom-btn" variant="contained" onClick={handleDownload}>Download pdf</Button>
                     <Button className="custom-btn" variant="contained" onClick={handleSave}>Save</Button>
-                    <Button className="custom-btn" variant="contained" onClick={navigateToDashboard}>Designs</Button>
+                    <Button className="custom-btn" variant="contained" onClick={handleDownload}>Download pdf</Button>
                 </div>
                 <div className={appState.sidebar ? 'add-design__preview' : 'add-design__preview full-width'}>
                     <object width="100%" height="100%" data={pdfLink} type="application/pdf"></object>
