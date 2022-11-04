@@ -31,12 +31,16 @@ function AddDesign () {
     const [designID, setDesignID] = useState('');
     const [pdfLink, setPdfLink] = useState('http://www.xmlpdf.com/manualfiles/hello-world.pdf');
     const codeEditorRef = React.useRef();
+    const jsonEditorRef = React.useRef();
     const {appState} = useApp();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (codeEditorRef.current) {
           const obj = new SelectionText(codeEditorRef.current);
+        }
+        if (jsonEditorRef.current) {
+            const obj = new SelectionText(jsonEditorRef.current);
         }
       }, []);
     
@@ -210,6 +214,7 @@ function AddDesign () {
 
             <div className="add-design">
                 <div data-color-mode="dark" className={appState.sidebar ? 'add-design__editor' : 'add-design__editor full-width'}>
+                    <span className="add-design__header">HTML Template</span>
                     <CodeEditor
                         className="add-design__editor--area"
                         value={code}
@@ -226,9 +231,11 @@ function AddDesign () {
                     />
                 </div>
                 <div className={appState.sidebar ? 'add-design__html' : 'add-design__html full-width'}>
+                <span className="add-design__header">JSON Data</span>
                     <CodeEditor
                         className="add-design__html--area"
                         value={jsonCode}
+                        ref={jsonEditorRef}
                         language="json"
                         placeholder="Please enter JSON."
                         onChange={(evn) => setJsonCode(evn.target.value)}
@@ -247,6 +254,7 @@ function AddDesign () {
                     <Button className="custom-btn" variant="contained" onClick={handleDownload}>Download pdf</Button>
                 </div>
                 <div className={appState.sidebar ? 'add-design__preview' : 'add-design__preview full-width'}>
+                    <span className="add-design__header">PDF Preview</span>
                     <object width="100%" height="100%" data={pdfLink} type="application/pdf"></object>
                 </div>
 

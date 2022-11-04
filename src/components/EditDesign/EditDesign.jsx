@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CodeEditor from '@uiw/react-textarea-code-editor';
+import CodeEditor, { SelectionText } from '@uiw/react-textarea-code-editor';
 import {TextField, Button} from '@mui/material';
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -22,8 +22,20 @@ function EditDesign () {
     const [designID, setDesignID] = useState('');
     const {id} = useParams();
     const [pdfLink, setPdfLink] = useState('');
+    const codeEditorRef = React.useRef();
+    const jsonEditorRef = React.useRef();
     const {appState} = useApp();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (codeEditorRef.current) {
+          const obj = new SelectionText(codeEditorRef.current);
+        }
+
+        if (jsonEditorRef.current) {
+            const obj = new SelectionText(jsonEditorRef.current);
+        }
+    }, []);
 
     useEffect(() => {
         fetchDesignByID();
@@ -217,10 +229,12 @@ function EditDesign () {
 
             <div className="add-design">
                 <div className={appState.sidebar ? 'add-design__editor' : 'add-design__editor full-width'}>
+                    <span className="add-design__header">HTML Template</span>
                     <CodeEditor
                         className="add-design__editor--area"
                         value={code}
-                        language="js"
+                        ref={codeEditorRef}
+                        language="html"
                         placeholder="Please enter HTML template"
                         onChange={(evn) => setCode(evn.target.value)}
                         padding={15}
@@ -233,9 +247,11 @@ function EditDesign () {
                     />
                 </div>
                 <div className={appState.sidebar ? 'add-design__html' : 'add-design__html full-width'}>
+                    <span className="add-design__header">JSON Data</span>
                     <CodeEditor
                         className="add-design__html--area"
                         value={jsonCode}
+                        ref={jsonEditorRef}
                         language="json"
                         placeholder="Please enter JSON."
                         onChange={(evn) => setJsonCode(evn.target.value)}
@@ -255,6 +271,7 @@ function EditDesign () {
                     <Button variant="contained" className="custom-btn"  onClick={handleDownload}>Download pdf</Button>
                 </div>
                 <div className={appState.sidebar ? 'add-design__preview' : 'add-design__preview full-width'}>
+                    <span className="add-design__header">PDF Preview</span>
                     <object width="100%" height="100%" data={pdfLink} type="application/pdf"></object>
                 </div>
 
