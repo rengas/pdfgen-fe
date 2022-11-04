@@ -40,7 +40,7 @@ function EditDesign () {
                 const {data} = res;
                 if (data) {
                     setCode('design' in data && data.design ? data.design : '');
-                    setJsonCode('fields' in data && data.fields ? JSON.stringify(data.fields) : '');
+                    setJsonCode('fields' in data && data.fields ? JSON.stringify(data.fields, null, 4) : '');
                     setName('name' in data && data.name ? data.name : '');
                 }
             }
