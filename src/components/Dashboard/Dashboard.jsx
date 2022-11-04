@@ -64,7 +64,7 @@ function Dashboard() {
         if (data) {
           const {designs, pagination} = data;
           if (page === 0) {
-            setRows(designs);
+            setRows(designs ? designs : []);
           } else {
             setRows((prev) => [...prev, ...designs]);
           }
