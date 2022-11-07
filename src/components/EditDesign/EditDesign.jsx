@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import CodeEditor, { SelectionText } from '@uiw/react-textarea-code-editor';
 import {TextField, Button} from '@mui/material';
 import { useNavigate, useParams } from "react-router-dom";
+import { html_beautify, js_beautify } from 'js-beautify';
 
 import ErrorDialog from '../ErrorDialog/ErrorDialog';
 import MessageDialog from '../MessageDialog/MessageDialog';
@@ -26,6 +27,25 @@ function EditDesign () {
     const jsonEditorRef = React.useRef();
     const {appState} = useApp();
     const navigate = useNavigate();
+    const htmlFormatOptions = {
+        "indent_size": "4",
+        "indent_char": " ",
+        "max_preserve_newlines": "5",
+        "preserve_newlines": true,
+        "keep_array_indentation": false,
+        "break_chained_methods": false,
+        "indent_scripts": "normal",
+        "brace_style": "collapse",
+        "space_before_conditional": true,
+        "unescape_strings": false,
+        "jslint_happy": false,
+        "end_with_newline": false,
+        "wrap_line_length": "0",
+        "indent_inner_html": false,
+        "comma_first": false,
+        "e4x": false,
+        "indent_empty_lines": false
+    };
 
     useEffect(() => {
         if (codeEditorRef.current) {
@@ -51,8 +71,8 @@ function EditDesign () {
             if (res) {
                 const {data} = res;
                 if (data) {
-                    setCode('design' in data && data.design ? data.design : '');
-                    setJsonCode('fields' in data && data.fields ? JSON.stringify(data.fields, null, 4) : '');
+                    setCode('design' in data && data.design ? html_beautify(data.design, htmlFormatOptions) : '');
+                    setJsonCode('fields' in data && data.fields ? js_beautify(JSON.stringify(data.fields), htmlFormatOptions) : '');
                     setName('name' in data && data.name ? data.name : '');
                 }
             }

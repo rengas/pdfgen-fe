@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -13,6 +13,8 @@ import { Typography } from '@mui/material';
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import Tooltip from '@mui/material/Tooltip';
+import ClearIcon from '@mui/icons-material/Clear';
 import TableViewIcon from '@mui/icons-material/TableView';
 import moment from 'moment';
 
@@ -31,6 +33,14 @@ const columns = [
   { id: 'action', label: 'ACTION', width: '100px'},
 ];
 
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
+
 function Dashboard() {
   const [focused, setFocused] = useState(false);
   const [page, setPage] = useState(0);
@@ -38,6 +48,8 @@ function Dashboard() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [searchCleared, setSearchCleared] = useState(false);
+  const prevRowsPerPage = usePrevious({rowsPerPage});
   const {appState} = useApp();
   const navigate = useNavigate();
   const [errMsg, setErrMsg] = useState('');
@@ -52,8 +64,16 @@ function Dashboard() {
   }, [page]);
 
   useEffect(() => {
-    fetchDesigns();
-  }, [rowsPerPage]);
+    if (prevRowsPerPage) {
+      fetchDesigns();
+    }
+}, [rowsPerPage])
+
+  useEffect(() => {
+    if (searchCleared) {
+      fetchDesigns();
+    }
+  }, [searchCleared]);
 
   const fetchDesigns = async () => {
     try {
@@ -72,6 +92,8 @@ function Dashboard() {
           if (pagination && 'Total' in pagination) {
             setTotalCount(pagination.Total);
           }
+
+          setSearchCleared(false);
         }
     } catch (err) {
       setErrMsg(err?.message);
@@ -102,12 +124,10 @@ function Dashboard() {
   }
 
   const handleSearch = () => {
-    if (searchTerm) {
-      setPage(() => {
-        fetchDesigns();
-        return 0;
-      });
-    }
+    setPage(() => {
+      fetchDesigns();
+      return 0;
+    });
   }
 
   const handleDelete = async(row) => {
@@ -160,6 +180,11 @@ function Dashboard() {
     }
   }
 
+  const handleClear = () => {
+    setSearchTerm('');
+    setSearchCleared(true);
+  }
+
   return (
     <div className="dashboard">
        <div className="dashboard__header">
@@ -186,6 +211,13 @@ function Dashboard() {
               },
           }}
         />
+        {
+          searchTerm && <Tooltip title="Clear search">
+            <IconButton className="custom-btn" onClick={handleClear}>
+              <ClearIcon />
+            </IconButton>
+          </Tooltip>
+        }
         <Button variant="contained" className="custom-btn" onClick={handleSearch}>Search</Button>
        </div>
 
