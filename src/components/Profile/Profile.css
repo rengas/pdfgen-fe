@@ -25,13 +25,22 @@
 .profile-data__header {
     font-weight: 600;
     margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .profile-data__field {
     display: flex;
+    align-items: center;
     gap: 1rem;
+    margin-bottom: 1.25rem;
 }
 
 .profile-data__label {
     font-weight: 500;
+}
+
+.login__container.profile-form {
+    width: 40%;
 }

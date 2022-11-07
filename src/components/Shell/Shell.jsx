@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect, useLayoutEffect } from 'react'
+import { useState, useEffect, useLayoutEffect } from 'react';
+import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -18,9 +19,11 @@ import "./Shell.css";
 
 function Shell() {
     const [user, setUser] = useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
     const [displaySidebar, setDisplaySidebar] = useState(true);
     const {appState, dispatch} = useApp();
     const navigate = useNavigate();
+    const open = Boolean(anchorEl);
 
     useEffect(() => {
         fetchUser();
@@ -30,12 +33,26 @@ function Shell() {
         dispatch({type: 'TOGGLE_SIDEBAR_STATUS', payload: displaySidebar});
     }, [displaySidebar]);
 
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleProfileNav = () => {
+        setAnchorEl(null);
+        navigate('/profile');
+    }
+
     const fetchUser = () => {
         const user = authService.getCurrentUser();
         setUser(user);
     }
 
     const handleLogout = () => {
+        setAnchorEl(null);
         authService.logout();
         navigate('/');
         fetchUser();
@@ -46,6 +63,21 @@ function Shell() {
             return !prev;
         });
     }
+
+    const getInitials = (email) => {
+        let initials = '';
+
+        if (email) {
+            const val = email.split('@')[0];
+            const names = val.split(' ');
+            initials = names[0].substring(0, 1).toUpperCase();
+            
+            if (names.length > 1) {
+                initials += names[names.length - 1].substring(0, 1).toUpperCase();
+            }
+        }
+        return initials;
+    };
 
     return (
         <>
@@ -58,7 +90,7 @@ function Shell() {
                     <div className="app__menus">
                         <a href="javascript:void(0)" className="app__menus--link" onClick={() => navigate('/dashboard')}>Dashboard</a>
                         <a href="javascript:void(0)" className="app__menus--link" onClick={() => navigate('/add-design')}>Design</a>
-                        <a href="javascript:void(0)" className="app__menus--link" onClick={() => navigate('/profile')}>Settings</a>
+                        <a href="javascript:void(0)" className="app__menus--link" onClick={() => navigate('/profile')}>My Account</a>
                     </div>
                 </div>
             }
@@ -69,7 +101,28 @@ function Shell() {
                         <a href="javascript:void(0)" className="app__menu" onClick={() => handleMenuToggle()}>
                             <MenuIcon />
                         </a>
-                        <a href="javascript:void(0)" className="app__logout" onClick={() => handleLogout()}>Logout</a>
+
+                        <Button
+                            id="menu-btn"
+                            className="app__profile custom-btn"
+                            onClick={handleClick}
+                        >
+                            {getInitials(user.user.email)}
+                        </Button>
+                        <Menu
+                            id="menu-item"
+                            anchorEl={anchorEl}
+                            open={open}
+                            onClose={handleClose}
+                            PaperProps={{  
+                                style: {  
+                                  width: 150,  
+                                },  
+                             }} 
+                        >
+                            <MenuItem onClick={handleProfileNav}>My Account</MenuItem>
+                            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                        </Menu>
                     </div>
                 }
                 <div className={`app__body ${user ? 'logged_in' : ''}`}>

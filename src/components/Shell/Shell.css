@@ -19,3 +19,11 @@
     padding: .5rem .75rem;
     border-radius: .25rem;
 }
+
+.app__profile {
+    border-radius: 50% !important;
+    min-width: 2.25rem !important;
+    width: 2.25rem;
+    height: 2.25rem;
+    font-weight: 600 !important;
+}
