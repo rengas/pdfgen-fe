@@ -5,7 +5,7 @@ const getUserProfile = () => {
 };
 
 const updateUserProfile = (payload) => {
-    return axios.put("/user", payload);
+    return axios.patch("/user", payload);
 };
 
 const ProfileService = {
