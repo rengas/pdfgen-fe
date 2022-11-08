@@ -7,7 +7,7 @@ import TokenService from "../services/token.service";
 // https://www.bezkoder.com/react-refresh-token/
 
 const instance = axios.create({
-  baseURL: "https://pdfgen-stg.onrender.com",
+  baseURL: "https://api.staging.pdfgen.pro",
   headers: {
     "Content-Type": "application/json",
   },
